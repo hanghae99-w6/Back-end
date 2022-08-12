@@ -1,6 +1,5 @@
 package com.springw6.backend.service;
 
-
 import com.springw6.backend.domain.Member;
 import com.springw6.backend.dto.requestDto.SignupRequestDto;
 import org.springframework.stereotype.Service;

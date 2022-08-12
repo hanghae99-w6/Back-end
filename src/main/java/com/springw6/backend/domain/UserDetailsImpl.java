@@ -1,6 +1,5 @@
 package com.springw6.backend.domain;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import com.springw6.backend.shared.Authority;
@@ -10,6 +9,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Data
 @NoArgsConstructor
