@@ -1,12 +1,12 @@
 package com.springw6.backend.jwt;
 
-import com.springw6.backend.controller.request.TokenDto;
-import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.domain.Member;
 import com.springw6.backend.domain.RefreshToken;
 import com.springw6.backend.domain.UserDetailsImpl;
+import com.springw6.backend.dto.requestDto.TokenDto;
+import com.springw6.backend.dto.responseDto.ResponseDto;
 import com.springw6.backend.repository.RefreshTokenRepository;
-import com.springw6.backend.service.UserDetailsServiceImpl;
+import com.springw6.backend.shared.Authority;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -37,7 +37,6 @@ public class TokenProvider {
   private static final String BEARER_TYPE = "bearer";
   private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            //30분
   private static final long REFRESH_TOKEN_EXPRIRE_TIME = 1000 * 60 * 60 * 24 * 7;     //7일
-
   private final Key key;
 
   private final RefreshTokenRepository refreshTokenRepository;
