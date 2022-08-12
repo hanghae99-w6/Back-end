@@ -1,6 +1,5 @@
 package com.springw6.backend.repository;
 
-
 import java.util.Optional;
 import com.springw6.backend.domain.Member;
 import com.springw6.backend.domain.RefreshToken;

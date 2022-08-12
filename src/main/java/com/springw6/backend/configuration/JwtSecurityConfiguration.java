@@ -1,8 +1,8 @@
 package com.springw6.backend.configuration;
 
-import com.example.intermediate.jwt.JwtFilter;
-import com.example.intermediate.jwt.TokenProvider;
-import com.example.intermediate.service.UserDetailsServiceImpl;
+import com.springw6.backend.jwt.JwtFilter;
+import com.springw6.backend.jwt.TokenProvider;
+import com.springw6.backend.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

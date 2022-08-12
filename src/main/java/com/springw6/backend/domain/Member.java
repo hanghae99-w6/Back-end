@@ -31,5 +31,4 @@ public class Member {
         this.nickname = signupRequestDto.getNickname();
     }
 
-
 }
