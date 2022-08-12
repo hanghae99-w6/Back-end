@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentResponseDto {
   private Long id;
+  private Long postId;
   private String author;
   private String comment;
   private int likes;

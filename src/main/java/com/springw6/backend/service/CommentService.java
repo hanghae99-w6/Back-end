@@ -53,6 +53,7 @@ public class CommentService {
     return ResponseDto.success(
         CommentResponseDto.builder()
             .id(comment.getId())
+            .postId(comment.getPost().getId())
             .author(comment.getMember().getNickname())
             .comment(comment.getComment())
             .createdAt(comment.getCreatedAt())
