@@ -1,7 +1,7 @@
 package com.springw6.backend.jwt;
 
-import com.example.intermediate.controller.response.ResponseDto;
-import com.example.intermediate.service.UserDetailsServiceImpl;
+import com.springw6.backend.controller.response.ResponseDto;
+import com.springw6.backend.service.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

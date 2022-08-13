@@ -1,12 +1,12 @@
 package com.springw6.backend.jwt;
 
-import com.example.intermediate.controller.request.TokenDto;
-import com.example.intermediate.controller.response.ResponseDto;
-import com.example.intermediate.domain.Member;
-import com.example.intermediate.domain.RefreshToken;
-import com.example.intermediate.domain.UserDetailsImpl;
-import com.example.intermediate.repository.RefreshTokenRepository;
-import com.example.intermediate.shared.Authority;
+import com.springw6.backend.controller.request.TokenDto;
+import com.springw6.backend.controller.response.ResponseDto;
+import com.springw6.backend.domain.Member;
+import com.springw6.backend.domain.RefreshToken;
+import com.springw6.backend.domain.UserDetailsImpl;
+import com.springw6.backend.repository.RefreshTokenRepository;
+import com.springw6.backend.shared.Authority;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
