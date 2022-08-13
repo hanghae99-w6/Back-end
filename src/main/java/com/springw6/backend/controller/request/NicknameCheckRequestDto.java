@@ -1,19 +1,17 @@
-package com.springw6.backend.dto.requestDto;
+package com.springw6.backend.controller.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.NotBlank;
+
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignupRequestDto {
+public class NicknameCheckRequestDto {
 
-    @NotBlank
-    private String email;
-    @NotBlank
-    private String password;
     @NotBlank
     private String nickname;
 
