@@ -119,7 +119,6 @@ public class PostService {
                       .id(post.getId())
                       .title(post.getTitle())
                       .content(post.getContent())
-                      .author(post.getMember().getNickname())
 //                      .likes(postLikes)
                       .imgUrl(post.getImgUrl())
                       .commentsNum(comments)
