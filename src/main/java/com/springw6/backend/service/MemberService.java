@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springw6.backend.controller.request.*;
 import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.domain.Member;
+import com.springw6.backend.domain.UserDetailsImpl;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -96,6 +100,7 @@ public class MemberService {
         return ResponseDto.success("로그인이 성공하였습니다.");
     }
 
+
     public ResponseDto<?> logoutMembers(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
             return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
@@ -125,7 +130,7 @@ public class MemberService {
 
     public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
         response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
-        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
+        response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
     }
 
@@ -134,9 +139,36 @@ public class MemberService {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
         // 2. 토큰으로 카카오 API 호출
-        KakaoUserInfoDto kakaoUserInfoDto = getKakaoUserInfo(accessToken);
-    }
+        KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
+        // DB 에 중복된 Kakao Id 가 있는지 확인
+        Long kakaoId = kakaoUserInfo.getId();
+        Member kakaoUser = memberRepository.findByKakaoId(kakaoId)
+                .orElse(null);
+
+        if (kakaoUser == null) {
+            // 회원가입
+            // username: kakao nickname
+            String nickname = kakaoUserInfo.getNickname();
+
+            // password: random UUID
+            String password = UUID.randomUUID().toString();
+            String encodedPassword = passwordEncoder.encode(password);
+
+            // email: kakao email
+            String loginId = kakaoUserInfo.getLoginId();
+            // role: 일반 사용자
+
+            kakaoUser = new Member(nickname, encodedPassword, loginId, kakaoId);
+            memberRepository.save(kakaoUser);
+        }
+
+        // 4. 강제 kakao로그인 처리
+        UserDetails userDetails = new UserDetailsImpl(kakaoUser);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    }
 
     private String getAccessToken(String code) throws JsonProcessingException {
 

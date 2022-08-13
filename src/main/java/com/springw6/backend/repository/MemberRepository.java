@@ -13,6 +13,6 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     Optional<Member> findByLoginId(String loginId);
 
-    List<Member> findAllByOrderByCreatedAt();
+    Optional<Member> findByKakaoId(Long kakaoId);
 
 }
