@@ -17,8 +17,8 @@ public class PostResponseDto {
   private String title;
   private String content;
   private String imgUrl;
-  private String author;
-  private int likes;
+  private Long likes;
+  private String star;
   private List<CommentResponseDto> comments;
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;
