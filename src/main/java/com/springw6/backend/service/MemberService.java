@@ -11,6 +11,7 @@ public class MemberService {
     @Transactional
     public Member signupMembers(SignupRequestDto signupRequestDto) {
         Member member = new Member();
+        return member;
     }
 
 }

@@ -6,6 +6,7 @@ import com.springw6.backend.domain.UserDetailsImpl;
 import com.springw6.backend.dto.requestDto.TokenDto;
 import com.springw6.backend.dto.responseDto.ResponseDto;
 import com.springw6.backend.repository.RefreshTokenRepository;
+import com.springw6.backend.service.UserDetailsServiceImpl;
 import com.springw6.backend.shared.Authority;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
