@@ -47,7 +47,7 @@ public class PostService {
                     .title(post.getTitle())
                     .content(post.getContent())
                     .imgUrl(post.getImgUrl())
-                    .author(post.getMember().getNickname())
+                    .star(post.getStar())
 //                    .likes(countLikesPost(post))
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
@@ -73,7 +73,6 @@ public class PostService {
                 SubCommentResponseDto.builder()
                         .id(subComment.getId())
                         .comment(subComment.getComment())
-                        .author(subComment.getMember().getNickname())
 //                        .likes(countLikesSubCommentLike(subComment))
                         .createdAt(subComment.getCreatedAt())
                         .modifiedAt(subComment.getModifiedAt())
@@ -83,7 +82,6 @@ public class PostService {
       commentResponseDtoList.add(
               CommentResponseDto.builder()
                       .id(comment.getId())
-                      .author(comment.getMember().getNickname())
                       .comment(comment.getComment())
 //                      .likes(countLikesComment(comment))
                       .subComment(subCommentResponseDtoList)
@@ -98,10 +96,11 @@ public class PostService {
                     .id(post.getId())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .author(post.getMember().getNickname())
                     .imgUrl(post.getImgUrl())
-//                    .likes(countLikesPost(post))
+                    .star(post.getStar())
+                    //.likes(countLikesPost(post))
                     .comments(commentResponseDtoList)
+
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build()
@@ -156,7 +155,7 @@ public class PostService {
                     .title(post.getTitle())
                     .content(post.getContent())
                     .imgUrl(post.getImgUrl())
-                    .author(post.getMember().getNickname())
+                    .star(post.getStar())
 //                    .likes(countLikesPost(post))
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
@@ -183,6 +182,8 @@ public class PostService {
     postRepository.delete(post);
     return ResponseDto.success("delete success");
   }
+
+
 
   @Transactional(readOnly = true)
   public ResponseDto<?> getAllPostByMember(HttpServletRequest request) {

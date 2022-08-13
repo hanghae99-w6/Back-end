@@ -12,6 +12,7 @@ public class MemberController {
     @PostMapping("/members/signup")
     public ResponseDto<?> signupMembers() {
 
+        return signupMembers();
     }
 
 }
