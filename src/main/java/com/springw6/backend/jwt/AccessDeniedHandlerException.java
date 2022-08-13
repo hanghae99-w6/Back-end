@@ -1,6 +1,6 @@
 package com.springw6.backend.jwt;
 
-import com.springw6.backend.controller.response.ResponseDto;
+import com.example.intermediate.controller.response.ResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

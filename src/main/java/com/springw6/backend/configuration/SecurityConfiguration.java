@@ -1,9 +1,9 @@
 package com.springw6.backend.configuration;
 
-import com.springw6.backend.jwt.AccessDeniedHandlerException;
-import com.springw6.backend.jwt.AuthenticationEntryPointException;
-import com.springw6.backend.jwt.TokenProvider;
-import com.springw6.backend.service.UserDetailsServiceImpl;
+import com.example.intermediate.jwt.AccessDeniedHandlerException;
+import com.example.intermediate.jwt.AuthenticationEntryPointException;
+import com.example.intermediate.jwt.TokenProvider;
+import com.example.intermediate.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
