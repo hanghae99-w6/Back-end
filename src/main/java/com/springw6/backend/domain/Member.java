@@ -22,15 +22,24 @@ public class Member extends Timestamped{
 
     @Column(nullable = false)
     private String loginId;
-
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private String nickname;
 
+    @Column(unique = true)
+    private Long kakaoId;
+
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
+    }
+
+    public Member(String nickname, String password, String loginId, Long kakaoId) {
+        this.nickname = nickname;
+        this.password = password;
+        this.loginId = loginId;
+        this.kakaoId = kakaoId;
     }
 
 }
