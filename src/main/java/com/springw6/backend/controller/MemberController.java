@@ -1,18 +1,54 @@
 package com.springw6.backend.controller;
 
-import com.springw6.backend.dto.responseDto.ResponseDto;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.springw6.backend.controller.request.LoginIdCheckRequestDto;
+import com.springw6.backend.controller.request.LoginRequestDto;
+import com.springw6.backend.controller.request.NicknameCheckRequestDto;
+import com.springw6.backend.controller.request.SignupRequestDto;
+import com.springw6.backend.controller.response.ResponseDto;
+import com.springw6.backend.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class MemberController {
 
-    @PostMapping("/members/signup")
-    public ResponseDto<?> signupMembers() {
+    private final MemberService memberService;
 
-        return signupMembers();
+    @PostMapping("/members/signup")
+    public ResponseDto<?> signupMembers(@RequestBody SignupRequestDto requestDto) {
+        return memberService.signupMember(requestDto);
+    }
+
+    @PostMapping("/members/nicknameCheck")
+    public ResponseDto<?> nicknameDubCheck(@RequestBody NicknameCheckRequestDto requestDto) {
+        return memberService.nicknameDubCheck(requestDto);
+    }
+
+    @PostMapping("/members/idCheck")
+    public ResponseDto<?> idDubCheck(@RequestBody LoginIdCheckRequestDto requestDto) {
+        return memberService.loginIdDubCheck(requestDto);
+    }
+
+    @PostMapping("/members/login")
+    public ResponseDto<?> loginMembers(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+        return memberService.loginMembers(requestDto,response);
+    }
+
+    @PostMapping("/members/logout")
+    public ResponseDto<?> logoutMembers(HttpServletRequest request) {
+        return memberService.logoutMembers(request);
+    }
+
+    @GetMapping("members/kakao/callback")
+    public String kakaoLogin(@RequestParam String code) throws JsonProcessingException {
+        memberService.kakaoLogin(code);
+        return "redirect:/";
     }
 
 }

@@ -1,23 +1,27 @@
 package com.springw6.backend.domain;
 
 
-import com.springw6.backend.dto.requestDto.SignupRequestDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class Member {
+@AllArgsConstructor
+@Builder
+public class Member extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String email;
+    private String loginId;
 
     @Column(nullable = false)
     private String password;
@@ -25,10 +29,8 @@ public class Member {
     @Column(nullable = false)
     private String nickname;
 
-    public Member(SignupRequestDto signupRequestDto) {
-        this.email = signupRequestDto.getEmail();
-        this.password = signupRequestDto.getPassword();
-        this.nickname = signupRequestDto.getNickname();
+    public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
+        return passwordEncoder.matches(password, this.password);
     }
 
 }
