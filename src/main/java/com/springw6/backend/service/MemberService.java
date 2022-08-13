@@ -124,8 +124,8 @@ public class MemberService {
 
 
     public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
-        response.addHeader("Access-Token", "Bearer " + tokenDto.getAccessToken());
-        response.addHeader("Refresh-Token", "Bearer " + tokenDto.getRefreshToken());
+        response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
+        response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
     }
 
