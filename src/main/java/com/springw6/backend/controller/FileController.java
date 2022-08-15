@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +18,8 @@ import java.util.List;
 
 @RestController
 public class FileController {
-
-    private String S3Bucket = "j4j-test-bucket"; // Bucket 이름
+@Value("${bucketName}")
+ private String S3Bucket; // Bucket 이름
 
     @Autowired
     AmazonS3Client amazonS3Client;
