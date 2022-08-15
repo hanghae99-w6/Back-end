@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SubCommentRequestDto {
   private Long commentId;
-  private String comment;
+  private String subComment;
 }
