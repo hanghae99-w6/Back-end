@@ -44,7 +44,10 @@ public class SecurityConfiguration {
     public WebSecurityCustomizer webSecurityCustomizer() {
         // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
         return (web) -> web.ignoring()
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**")
+                .antMatchers("/api/members/**")
+                .antMatchers("/favicon.ico");
+
     }
 
 
@@ -71,7 +74,7 @@ public class SecurityConfiguration {
                 .antMatchers("/api/members/**").permitAll()
                 .antMatchers("/api/post/**").permitAll()
                 .antMatchers("/api/comment/**").permitAll()
-                .antMatchers("/api/subcomment/**").permitAll()
+                .antMatchers("/api/subComment/**").permitAll()
                 .antMatchers("/api/likes").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()

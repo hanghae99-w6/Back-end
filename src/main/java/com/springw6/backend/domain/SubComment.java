@@ -29,6 +29,9 @@ public class SubComment extends Timestamped {
   @Column(nullable = false)
   private String comment;
 
+  @Column
+  private Long likes;
+
 //  @OneToMany(mappedBy = "subComment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 //  private List<SubCommentLike> subCommentLikeList;
 
@@ -38,5 +41,9 @@ public class SubComment extends Timestamped {
 
   public boolean validateMember(Member member) {
     return !this.member.equals(member);
+  }
+
+  public void updateLikes(Long likes) {
+    this.likes = likes;
   }
 }

@@ -10,6 +10,7 @@ import com.springw6.backend.domain.UserDetailsImpl;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -168,6 +169,8 @@ public class MemberService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
     }
+    @Value("${myKaKaoRestAplKey}")
+    private String myKaKaoRestAplKey;
 
     private String getAccessToken(String code) throws JsonProcessingException {
 
@@ -178,7 +181,7 @@ public class MemberService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "{myKaKaoRestAplKey}");
+        body.add("client_id", myKaKaoRestAplKey);
         body.add("redirect_uri", "http://localhost:8080/members/kakao/callback");
         body.add("code", code);
 
@@ -209,7 +212,6 @@ public class MemberService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         // HTTP 요청 보내기
-
         HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String>response = rt.exchange(

@@ -8,7 +8,6 @@ import com.springw6.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final CommentRepository commentRepository;
-
   private final TokenProvider tokenProvider;
 
 //  private final LikeRepository likeRepository;
@@ -44,15 +42,13 @@ public class PostService {
       return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
     }
 
-
-
     Post post = Post.builder()
             .title(requestDto.getTitle())
             .content(requestDto.getContent())
             .imgUrl(requestDto.getImgUrl())
             .member(member)
             .star(requestDto.getStar())
-//            .likes(0L)
+            .category(requestDto.getCategory())
             .build();
     postRepository.save(post);
     return ResponseDto.success(
@@ -62,8 +58,8 @@ public class PostService {
                     .content(post.getContent())
                     .imgUrl(post.getImgUrl())
                     .star(post.getStar())
-//                    .author(post.getMember().getNickname())
-//                    .likes(post.getLikes())
+                    .category(post.getCategory())
+                    .likes(post.getLikes())
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build()
@@ -89,7 +85,7 @@ public class PostService {
                       .id(comment.getId())
                       .author(comment.getMember().getNickname())
 //                      .content(comment.getContent())
-//                      .likes(comment.getLikes())
+                      .likes(comment.getLikes())
                       .createdAt(comment.getCreatedAt())
                       .modifiedAt(comment.getModifiedAt())
                       .build()
@@ -105,7 +101,7 @@ public class PostService {
                     .content(post.getContent())
 //                    .commentResponseDtoList(commentResponseDtoList)
 //                    .author(post.getMember().getNickname())
-//                    .likes(post.getLikes())
+                    .likes(post.getLikes())
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build()
