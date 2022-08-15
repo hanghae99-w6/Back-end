@@ -25,12 +25,12 @@ public class MemberController {
         return memberService.signupMember(requestDto);
     }
 
-    @PostMapping("/members/nicknameCheck")
+    @PostMapping("/members/nicknamecheck")
     public ResponseDto<?> nicknameDubCheck(@RequestBody NicknameCheckRequestDto requestDto) {
         return memberService.nicknameDubCheck(requestDto);
     }
 
-    @PostMapping("/members/idCheck")
+    @PostMapping("/members/idcheck")
     public ResponseDto<?> idDubCheck(@RequestBody LoginIdCheckRequestDto requestDto) {
         return memberService.loginIdDubCheck(requestDto);
     }

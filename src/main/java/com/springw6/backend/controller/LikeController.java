@@ -14,17 +14,17 @@ import javax.servlet.http.HttpServletRequest;
 public class LikeController {
     private final LikeService likeService;
 
-    @PostMapping("/auth/postLikes/{id}")
+    @PostMapping("/auth/postlikes/{id}")
     public ResponseDto<?> postLikes(@PathVariable Long id, HttpServletRequest request) {
         return likeService.postLikes(id,request);
     }
 
-    @PostMapping("/auth/commentLikes/{id}")
+    @PostMapping("/auth/commentlikes/{id}")
     public ResponseDto<?> commentLikes(@PathVariable Long id, HttpServletRequest request) {
         return likeService.commentLikes(id,request);
     }
 
-    @PostMapping("/auth/subCommentLikes/{id}")
+    @PostMapping("/auth/subcommentlikes/{id}")
     public ResponseDto<?> subCommentLikes(@PathVariable Long id, HttpServletRequest request) {
         return likeService.subCommentLikes(id,request);
     }
