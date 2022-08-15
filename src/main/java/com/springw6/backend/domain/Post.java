@@ -16,6 +16,7 @@ import java.util.List;
 @Entity
 public class Post extends Timestamped {
 
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

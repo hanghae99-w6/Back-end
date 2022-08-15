@@ -5,6 +5,7 @@ import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.controller.response.SubCommentResponseDto;
 import com.springw6.backend.domain.Comment;
 import com.springw6.backend.domain.Member;
+import com.springw6.backend.domain.Post;
 import com.springw6.backend.domain.SubComment;
 import com.springw6.backend.jwt.TokenProvider;
 //import com.springw6.backend.domain.SubCommentLike;
@@ -28,6 +29,7 @@ public class SubCommentService {
 
   private final TokenProvider tokenProvider;
   private final CommentService commentService;
+  private final PostService postService;
 
   @Transactional
   public ResponseDto<?> createSubComment(
@@ -43,17 +45,22 @@ public class SubCommentService {
     if (null == comment)
       return ResponseDto.fail("NOT_FOUND", "comment id is not exist");
 
+    Post post = postService.isPresentPost(comment.getPost().getId());
     SubComment subComment = SubComment.builder()
-        .commentId(comment.getId())
+        .commentId(requestDto.getCommentId())
         .member(member)
-        .comment(requestDto.getComment())
+        .post(post)
+        .comment(comment)
+        .subComment(requestDto.getSubComment())
+        .likes(0L)
         .build();
     subCommentRepository.save(subComment);
     return ResponseDto.success(
         SubCommentResponseDto.builder()
           .id(subComment.getId())
           .author(member.getNickname())
-          .comment(subComment.getComment())
+          .subComment(subComment.getSubComment())
+          .likes(subComment.getLikes())
           .createdAt(subComment.getCreatedAt())
           .modifiedAt(subComment.getModifiedAt())
           .build()
@@ -75,7 +82,7 @@ public class SubCommentService {
           SubCommentResponseDto.builder()
               .id(subComment.getId())
               .author(subComment.getMember().getNickname())
-              .comment(subComment.getComment())
+              .subComment(subComment.getSubComment())
 //              .likes(countLikesSubCommentLike(subComment))
               .createdAt(subComment.getCreatedAt())
               .modifiedAt(subComment.getModifiedAt())
@@ -114,7 +121,7 @@ public class SubCommentService {
         SubCommentResponseDto.builder()
             .id(subComment.getId())
             .author(member.getNickname())
-            .comment(subComment.getComment())
+            .subComment(subComment.getSubComment())
             .createdAt(subComment.getCreatedAt())
             .modifiedAt(subComment.getModifiedAt())
             .build()
