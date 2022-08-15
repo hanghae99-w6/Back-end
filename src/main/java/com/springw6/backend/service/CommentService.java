@@ -73,18 +73,39 @@ public class CommentService {
     List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
     for (Comment comment : commentList) {
+
+      // 대댓글 리스트
+      List<SubComment> subCommentList = subCommentRepository.findAllByCommentId(comment.getId());
+      List<SubCommentResponseDto> subCommentResponseDtoList = new ArrayList<>();
+
+      for (SubComment subComment : subCommentList) {
+        subCommentResponseDtoList.add(
+                SubCommentResponseDto.builder()
+                        .id(subComment.getId())
+                        .author(subComment.getMember().getNickname())
+                        .subComment(subComment.getSubComment())
+                        .likes(subComment.getLikes())
+                        .createdAt(subComment.getCreatedAt())
+                        .modifiedAt(subComment.getModifiedAt())
+                        .build()
+        );
+      }
+
       commentResponseDtoList.add(
-          CommentResponseDto.builder()
-              .id(comment.getId())
-              .author(comment.getMember().getNickname())
-              .comment(comment.getComment())
-//              .likes(countLikesComment(comment))
-              .createdAt(comment.getCreatedAt())
-              .modifiedAt(comment.getModifiedAt())
-              .build()
+              CommentResponseDto.builder()
+                      .id(comment.getId())
+                      .author(comment.getMember().getNickname())
+                      .comment(comment.getComment())
+                      .subComment(subCommentResponseDtoList) // 여기에 대댓글 넣기
+                      .likes(comment.getLikes())
+                      .createdAt(comment.getCreatedAt())
+                      .modifiedAt(comment.getModifiedAt())
+                      .build()
       );
     }
-    return ResponseDto.success(commentResponseDtoList);
+    return ResponseDto.success(
+            commentResponseDtoList
+    );
   }
 
   @Transactional(readOnly = true)
@@ -139,7 +160,7 @@ public class CommentService {
       subCommentResponseDtoList.add(
           SubCommentResponseDto.builder()
               .id(subComment.getId())
-              .comment(subComment.getComment())
+              .subComment(subComment.getSubComment())
               .author(subComment.getMember().getNickname())
 //              .likes(countLikesSubCommentLike(subComment))
               .createdAt(subComment.getCreatedAt())
