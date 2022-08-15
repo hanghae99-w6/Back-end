@@ -103,14 +103,17 @@ public class MemberService {
 
     public ResponseDto<?> logoutMembers(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-            return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+            return ResponseDto.fail("INVALID_TOKEN", "로그인 해주세요.");
         }
         Member member = tokenProvider.getMemberFromAuthentication();
+        System.out.println(member);
         if (null == member) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "member not found");
+                    "사용자를 찾을 수 없습니다.");
+        } else {
+            tokenProvider.deleteRefreshToken(member);
+            return ResponseDto.success("로그아웃에 성공하셨습니다.");
         }
-        return tokenProvider.deleteRefreshToken(member);
     }
 
 
