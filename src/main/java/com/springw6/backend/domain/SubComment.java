@@ -7,43 +7,51 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "SubComment")
 public class SubComment extends Timestamped {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   private Long id;
 
-  @JoinColumn(name = "member_id", nullable = false)
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Member member;
+   @JoinColumn(name = "member_id", nullable = false)
+   @ManyToOne(fetch = FetchType.LAZY)
+   private Member member;
 
-  private Long commentId;
+   @JoinColumn(name = "post_id", nullable = false)
+   @ManyToOne(fetch = FetchType.LAZY)
+   private Post post;
 
-  @Column(nullable = false)
-  private String comment;
+   @JoinColumn(name = "commentid", nullable = false)
+   @ManyToOne(fetch = FetchType.LAZY)
+   private Comment comment;
 
-  @Column
-  private Long likes;
+   @Column(nullable = false)
+   private Long commentId;
+
+   @Column(nullable = false)
+   private String subComment;
+
+   @Column
+   private Long likes;
 
 //  @OneToMany(mappedBy = "subComment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 //  private List<SubCommentLike> subCommentLikeList;
 
-  public void update(SubCommentRequestDto requestDto) {
-    this.comment = requestDto.getComment();
-  }
+   public void update(SubCommentRequestDto requestDto) {
+      this.subComment = requestDto.getSubComment();
+   }
 
-  public boolean validateMember(Member member) {
-    return !this.member.equals(member);
-  }
+   public boolean validateMember(Member member) {
+      return !this.member.equals(member);
+   }
 
-  public void updateLikes(Long likes) {
-    this.likes = likes;
-  }
+   public void updateLikes(Long likes) {
+      this.likes = likes;
+   }
 }

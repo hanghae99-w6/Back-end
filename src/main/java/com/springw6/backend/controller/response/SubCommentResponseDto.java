@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 public class SubCommentResponseDto {
   private Long id;
   private String author;
-  private String comment;
-  private int likes;
+  private String subComment;
+  private Long likes;
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;
 }
