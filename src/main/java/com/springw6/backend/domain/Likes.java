@@ -1,5 +1,6 @@
 package com.springw6.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,17 +13,31 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class CommentLike {
+@Table(name = "likes")
+public class Likes extends Timestamped {
 
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
 
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Member member;
+
+    @JoinColumn(name = "post_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Post post;
 
     @JoinColumn(name = "comment_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Comment comment;
+
+    @JoinColumn(name = "subComment_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private SubComment subComment;
+
 }
