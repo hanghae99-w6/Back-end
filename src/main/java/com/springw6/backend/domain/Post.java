@@ -32,6 +32,12 @@ public class Post extends Timestamped {
   @Column(nullable = false)
   private String star;
 
+  @Column(nullable = false)
+  private String category;
+
+  @Column
+  private Long likes;
+
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments;
@@ -43,14 +49,15 @@ public class Post extends Timestamped {
   @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
   private List<Comment> commentList;
 
-//  @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-//  private List<PostLike> postLikeList;
+  @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+  private List<Likes> postLikeList;
 
   public void update(PostRequestDto postRequestDto) {
     this.title = postRequestDto.getTitle();
     this.content = postRequestDto.getContent();
     this.imgUrl = postRequestDto.getImgUrl();
     this.star = postRequestDto.getStar();
+    this.category = postRequestDto.getCategory();
   }
 
   public void update(String imgUrl) {
@@ -59,6 +66,10 @@ public class Post extends Timestamped {
 
   public boolean validateMember(Member member) {
     return !this.member.equals(member);
+  }
+
+  public void updateLikes(Long likes) {
+    this.likes = likes;
   }
 
 }

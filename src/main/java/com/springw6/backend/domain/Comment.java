@@ -31,6 +31,9 @@ public class Comment extends Timestamped {
   @Column(nullable = false)
   private String comment;
 
+  @Column
+  private Long likes;
+
 //  @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 //  private List<CommentLike> commentLikeList;
 
@@ -41,4 +44,9 @@ public class Comment extends Timestamped {
   public boolean validateMember(Member member) {
     return !this.member.equals(member);
   }
+
+  public void updateLikes(Long likes) {
+    this.likes = likes;
+  }
+
 }
