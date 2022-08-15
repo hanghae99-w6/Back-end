@@ -73,26 +73,26 @@ public class PostService {
       return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
     }
 
-    List<Comment> commentList = commentRepository.findAllByPost(post);
-
-    System.out.println("[게시글 조회] 해당 게시물의 댓글 리스트 (commentList): " + commentList);
-
-    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-
-    for (Comment comment : commentList) {
-      commentResponseDtoList.add(
-              CommentResponseDto.builder()
-                      .id(comment.getId())
-                      .author(comment.getMember().getNickname())
-//                      .content(comment.getContent())
-                      .likes(comment.getLikes())
-                      .createdAt(comment.getCreatedAt())
-                      .modifiedAt(comment.getModifiedAt())
-                      .build()
-      );
-    }
-
-    System.out.println("[게시글 조회] 해당 게시물의 댓글 리스트 DTO (commentResponseDtoList): " + commentResponseDtoList);
+//    List<Comment> commentList = commentRepository.findAllByPost(post);
+//
+//    System.out.println("[게시글 조회] 해당 게시물의 댓글 리스트 (commentList): " + commentList);
+//
+//    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//
+//    for (Comment comment : commentList) {
+//      commentResponseDtoList.add(
+//                              CommentResponseDto.builder()
+//                                      .id(comment.getId())
+////                                      .author(comment.getMember().getNickname())
+////                      .content(comment.getContent())
+//                                      .likes(comment.getLikes())
+//                                      .createdAt(comment.getCreatedAt())
+//                      .modifiedAt(comment.getModifiedAt())
+//                      .build()
+//      );
+//    }
+//
+//    System.out.println("[게시글 조회] 해당 게시물의 댓글 리스트 DTO (commentResponseDtoList): " + commentResponseDtoList);
 
     return ResponseDto.success(
             PostResponseDto.builder()
@@ -100,7 +100,8 @@ public class PostService {
                     .title(post.getTitle())
                     .content(post.getContent())
 //                    .commentResponseDtoList(commentResponseDtoList)
-//                    .author(post.getMember().getNickname())
+                    .star((post.getStar()))
+                    .imgUrl(post.getImgUrl())
                     .likes(post.getLikes())
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
