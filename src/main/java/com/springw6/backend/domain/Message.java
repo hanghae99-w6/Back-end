@@ -1,6 +1,5 @@
 package com.springw6.backend.domain;
 
-import com.springw6.backend.controller.response.ResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

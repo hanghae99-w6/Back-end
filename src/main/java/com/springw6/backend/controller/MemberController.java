@@ -8,6 +8,7 @@ import com.springw6.backend.controller.request.SignupRequestDto;
 import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,27 +22,27 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/members/signup")
-    public ResponseDto<?> signupMembers(@RequestBody SignupRequestDto requestDto) {
+    public ResponseEntity<?> signupMembers(@RequestBody SignupRequestDto requestDto) {
         return memberService.signupMember(requestDto);
     }
 
     @PostMapping("/members/nicknamecheck")
-    public ResponseDto<?> nicknameDubCheck(@RequestBody NicknameCheckRequestDto requestDto) {
+    public ResponseEntity<?> nicknameDubCheck(@RequestBody NicknameCheckRequestDto requestDto) {
         return memberService.nicknameDubCheck(requestDto);
     }
 
     @PostMapping("/members/idcheck")
-    public ResponseDto<?> idDubCheck(@RequestBody LoginIdCheckRequestDto requestDto) {
+    public ResponseEntity<?> idDubCheck(@RequestBody LoginIdCheckRequestDto requestDto) {
         return memberService.loginIdDubCheck(requestDto);
     }
 
     @PostMapping("/members/login")
-    public ResponseDto<?> loginMembers(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+    public ResponseEntity<?> loginMembers(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
         return memberService.loginMembers(requestDto,response);
     }
 
     @PostMapping("/members/logout")
-    public ResponseDto<?> logoutMembers(HttpServletRequest request) {
+    public ResponseEntity<?> logoutMembers(HttpServletRequest request) {
         return memberService.logoutMembers(request);
     }
 
