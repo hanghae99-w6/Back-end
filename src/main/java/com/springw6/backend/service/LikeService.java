@@ -6,6 +6,8 @@ import com.springw6.backend.domain.*;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
@@ -28,14 +30,14 @@ public class LikeService {
 
 
     @Transactional
-    public ResponseDto<?> postLikes(Long id, HttpServletRequest request) {
+    public ResponseEntity<?> postLikes(Long id, HttpServletRequest request) {
         Member member =validateMember(request);
         if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "게시글에 좋아요를 누르기 위해서는 로그인을 해 주세요");
+            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "게시글에 좋아요를 누르기 위해서는 로그인을 해 주세요"),HttpStatus.UNAUTHORIZED);
         }
         Post post = postService.isPresentPost(id);
         if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "게시글이 존재하지 않습니다.");
+            return new ResponseEntity<>(Message.fail("NOT_FOUND", "게시글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
         }
         Likes postLike = isPresentPostLike(member, post);
         if (null == postLike) {
@@ -46,27 +48,27 @@ public class LikeService {
             );
             Long likes = likesRepository.countAllByPostId(post.getId());
             post.updateLikes(likes);
-            return ResponseDto.success("좋아요를 누르셨습니다.");
+            return new ResponseEntity<>(Message.success("좋아요를 눌렀습니다."),HttpStatus.OK);
         } else {
             postLikeRepository.delete(postLike);
             Long likes = likesRepository.countAllByPostId(post.getId());
             post.updateLikes(likes);
-            return ResponseDto.success("좋아요를 취소하셨습니다.");
+            return new ResponseEntity<>(Message.success("좋아요를 취소했습니다."),HttpStatus.OK);
         }
 
     }
 
 
     @Transactional
-    public ResponseDto<?> commentLikes(Long id, HttpServletRequest request) {
+    public ResponseEntity<?> commentLikes(Long id, HttpServletRequest request) {
         Member member = validateMember(request);
         if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "댓글에 좋아요를 누르기 위해서는 로그인을 해 주세요");
+            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "댓글에 좋아요를 누르기 위해서는 로그인을 해 주세요"),HttpStatus.UNAUTHORIZED);
         }
 
         Comment comment = commentService.isPresentComment(id);
         if (null == comment) {
-            return ResponseDto.fail("NOT_FOUND", "댓글이 존재하지 않습니다.");
+            return new ResponseEntity<>(Message.fail("NOT_FOUND", "댓글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
         }
         Likes commentLike = isPresentCommentLike(member, comment);
         if (null == commentLike) {
@@ -77,26 +79,26 @@ public class LikeService {
             );
             Long likes = likesRepository.countAllByCommentId(comment.getId());
             comment.updateLikes(likes);
-            return ResponseDto.success("좋아요를 누르셨습니다.");
+            return new ResponseEntity<>(Message.success("좋아요를 눌렀습니다."),HttpStatus.OK);
         } else {
             commentLikeRepository.delete(commentLike);
             Long likes = likesRepository.countAllByCommentId(comment.getId());
             comment.updateLikes(likes);
-            return ResponseDto.success("좋아요를 취소하셨습니다.");
+            return new ResponseEntity<>(Message.success("좋아요를 취소했습니다."),HttpStatus.OK);
         }
     }
 
 
     @Transactional
-    public ResponseDto<?> subCommentLikes(Long id, HttpServletRequest request) {
+    public ResponseEntity<?> subCommentLikes(Long id, HttpServletRequest request) {
         Member member = validateMember(request);
         if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "대댓글에 좋아요를 누르기 위해서는 로그인을 해 주세요");
+            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "대댓글에 좋아요를 누르기 위해서는 로그인을 해 주세요"),HttpStatus.UNAUTHORIZED);
         }
 
         SubComment subComment = subCommentService.isPresentSubComment(id);
         if (null == subComment) {
-            return ResponseDto.fail("NOT_FOUND", "대댓글이 존재하지 않습니다.");
+            return new ResponseEntity<>(Message.fail("NOT_FOUND", "대댓글이 존재하지 않습니다."),HttpStatus.NOT_FOUND);
         }
 
         Likes subCommentLike = isPresentSubCommentLike(member, subComment);
@@ -108,12 +110,12 @@ public class LikeService {
             );
             Long likes = likesRepository.countAllBySubCommentId(subComment.getId());
             subComment.updateLikes(likes);
-            return ResponseDto.success("좋아요를 누르셨습니다.");
+            return new ResponseEntity<>(Message.success("좋아요를 눌렀습니다."),HttpStatus.OK);
         } else {
             subCommentLikeRepository.delete(subCommentLike);
             Long likes = likesRepository.countAllBySubCommentId(subComment.getId());
             subComment.updateLikes(likes);
-            return ResponseDto.success("좋아요를 취소하셨습니다.");
+            return new ResponseEntity<>(Message.success("좋아요를 취소했습니다."),HttpStatus.OK);
         }
     }
 

@@ -4,6 +4,10 @@ import com.springw6.backend.controller.request.SubCommentRequestDto;
 import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.controller.response.SubCommentResponseDto;
 import com.springw6.backend.domain.*;
+import com.springw6.backend.exceptions.CommentNotFoundException;
+import com.springw6.backend.exceptions.InvalidTokenException;
+import com.springw6.backend.exceptions.NotAuthorException;
+import com.springw6.backend.exceptions.SubCommentNotFoundException;
 import com.springw6.backend.jwt.TokenProvider;
 //import com.springw6.backend.domain.SubCommentLike;
 //import com.springw6.backend.repository.SubCommentLikeRepository;
@@ -37,13 +41,11 @@ public class SubCommentService {
   ) {
     Member member = validateMember(request);
     if (null == member) {
-      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid"), HttpStatus.UNAUTHORIZED);
+      throw new InvalidTokenException();
     }
 
     Comment comment = commentService.isPresentComment(requestDto.getCommentId());
-    if (null == comment)
-      return new ResponseEntity<>(Message.fail("NOT_FOUND", "comment id is not exist"),HttpStatus.UNAUTHORIZED);
-
+    if (null == comment) throw new CommentNotFoundException();
     Post post = postService.isPresentPost(comment.getPost().getId());
     SubComment subComment = SubComment.builder()
         .commentId(requestDto.getCommentId())
@@ -70,7 +72,7 @@ public class SubCommentService {
   public ResponseEntity<?> getAllSubCommentByMember(HttpServletRequest request) {
     Member member = validateMember(request);
     if (null == member) {
-      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid"),HttpStatus.UNAUTHORIZED);
+      throw new InvalidTokenException();
     }
 
     List<SubComment> subCommentList = subCommentRepository.findAllByMember(member);
@@ -99,20 +101,19 @@ public class SubCommentService {
   ) {
     Member member = validateMember(request);
     if (null == member) {
-      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid"),HttpStatus.UNAUTHORIZED);
+      throw new InvalidTokenException();
     }
 
     Comment comment = commentService.isPresentComment(requestDto.getCommentId());
-    if (null == comment)
-      return new ResponseEntity<>(Message.fail("NOT_FOUND", "comment id is not exist"),HttpStatus.NOT_FOUND);
+    if (null == comment) throw new CommentNotFoundException();
 
     SubComment subComment = isPresentSubComment(id);
     if (null == subComment) {
-      return new ResponseEntity<>(Message.fail("NOT_FOUND", "sub comment id is not exist"),HttpStatus.NOT_FOUND);
+      throw new SubCommentNotFoundException();
     }
 
     if (subComment.validateMember(member)) {
-      return new ResponseEntity<>(Message.fail("BAD_REQUEST", "only author can update"),HttpStatus.BAD_REQUEST);
+      throw new NotAuthorException();
     }
 
     subComment.update(requestDto);
@@ -134,20 +135,17 @@ public class SubCommentService {
   ) {
     Member member = validateMember(request);
     if (null == member) {
-      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid"),HttpStatus.UNAUTHORIZED);
+      throw new InvalidTokenException();
     }
 
     Comment comment = commentService.isPresentComment(id);
-    if (null == comment)
-      return new ResponseEntity<>(Message.fail("NOT_FOUND", "comment id is not exist"),HttpStatus.NOT_FOUND);
+    if (null == comment)  throw new CommentNotFoundException();
 
     SubComment subComment = isPresentSubComment(id);
-    if (null == subComment) {
-      return new ResponseEntity<>(Message.fail("NOT_FOUND", "sub comment id is not exist"),HttpStatus.NOT_FOUND);
-    }
+    if (null == subComment)  throw new SubCommentNotFoundException();
 
     if (subComment.validateMember(member)) {
-      return new ResponseEntity<>(Message.fail("BAD_REQUEST", "only author can update"),HttpStatus.BAD_REQUEST);
+      throw new NotAuthorException();
     }
 
     subCommentRepository.delete(subComment);

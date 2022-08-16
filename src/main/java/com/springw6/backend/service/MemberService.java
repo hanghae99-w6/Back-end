@@ -6,15 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springw6.backend.controller.request.*;
 import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.domain.Member;
+import com.springw6.backend.domain.Message;
 import com.springw6.backend.domain.UserDetailsImpl;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -40,10 +38,9 @@ public class MemberService {
     private final TokenProvider tokenProvider;
 
     @Transactional
-    public ResponseDto<?> signupMember(SignupRequestDto requestDto) {
+    public ResponseEntity<?> signupMember(SignupRequestDto requestDto) {
         if (null != isPresentMember(requestDto.getNickname())) {
-            return ResponseDto.fail("DUPLICATED_NICKNAME",
-                    "아이디가 중복됩니다.");
+            return new ResponseEntity<>(Message.fail("DUPLICATED_NICKNAME","아이디가 중복됩니다."), HttpStatus.ALREADY_REPORTED);
         }
 
         Member member = Member.builder()
@@ -52,67 +49,63 @@ public class MemberService {
                 .loginId(requestDto.getLoginId())
                 .build();
         memberRepository.save(member);
-        return ResponseDto.success("회원가입에 성공하였습니다.");
+        return new ResponseEntity<>(Message.success("회원가입에 성공했습니다."), HttpStatus.OK);
     }
 
 
     @Transactional
-    public ResponseDto<?>nicknameDubCheck(NicknameCheckRequestDto requestDto) {
+    public ResponseEntity<?>nicknameDubCheck(NicknameCheckRequestDto requestDto) {
 
         Member member = isPresentMember(requestDto.getNickname());
 
         if (null != member) {
-            return ResponseDto.fail("NICKNAME_ALREADY_USE", "사용 불가능한 닉네임입니다.");
+            return new ResponseEntity<>(Message.fail("NICKNAME_ALREADY_USE", "사용 불가능한 닉네임입니다."),HttpStatus.ALREADY_REPORTED);
         }
-        return ResponseDto.success("사용 가능한 닉네임입니다.");
+        return new ResponseEntity<>(Message.success("사용 가능한 닉네임입니다."), HttpStatus.OK);
     }
 
 
     @Transactional
-    public ResponseDto<?> loginIdDubCheck(LoginIdCheckRequestDto requestDto) {
+    public ResponseEntity<?> loginIdDubCheck(LoginIdCheckRequestDto requestDto) {
 
         Member member = isPresentLoginId(requestDto.getLoginId());
 
         if (null != member) {
-            return ResponseDto.fail("MEMBER_ALREADY_USE", "사용 불가능한 이메일입니다.");
+            return new ResponseEntity<>(Message.fail("EMAIL_ALREADY_USE", "사용 불가능한 이메일입니다."),HttpStatus.ALREADY_REPORTED);
         }
-
-        return ResponseDto.success("사용 가능한 이메일입니다.");
-
+        return new ResponseEntity<>(Message.success("사용 가능한 이메일입니다."), HttpStatus.OK);
     }
 
 
     @Transactional
-    public ResponseDto<?> loginMembers(LoginRequestDto requestDto, HttpServletResponse response) {
+    public ResponseEntity<?> loginMembers(LoginRequestDto requestDto, HttpServletResponse response) {
         Member member = isPresentLoginId(requestDto.getLoginId());
         if (null == member) {
-            return ResponseDto.fail("LoginId_NOT_FOUND",
-                    "이메일을 입력하세요.");
+            return new ResponseEntity<>(Message.fail("LOGINID_NOT_FOUND", "이메일을 입력하세요."),HttpStatus.UNAUTHORIZED);
         }
 
         if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
-            return ResponseDto.fail("INVALID_MEMBER", "비밀번호가 일치하지 않습니다.");
+            return new ResponseEntity<>(Message.fail("INVALID_MEMBER", "비밀번호가 일치하지 않습니다."),HttpStatus.NOT_FOUND);
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenToHeaders(tokenDto, response);
 
-        return ResponseDto.success("로그인이 성공하였습니다.");
+        return new ResponseEntity<>(Message.success("로그인에 성공하였습니다."), HttpStatus.OK);
     }
 
 
-    public ResponseDto<?> logoutMembers(HttpServletRequest request) {
+    public ResponseEntity<?> logoutMembers(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-            return ResponseDto.fail("INVALID_TOKEN", "로그인 해주세요.");
+            return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "로그인 해주세요."),HttpStatus.UNAUTHORIZED);
         }
         Member member = tokenProvider.getMemberFromAuthentication();
         System.out.println(member);
         if (null == member) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "사용자를 찾을 수 없습니다.");
+            return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND", "사용자를 찾을 수 없습니다."),HttpStatus.NOT_FOUND);
         } else {
             tokenProvider.deleteRefreshToken(member);
-            return ResponseDto.success("로그아웃에 성공하셨습니다.");
+            return new ResponseEntity<>(Message.success("로그아웃에 성공하였습니다."), HttpStatus.OK);
         }
     }
 
