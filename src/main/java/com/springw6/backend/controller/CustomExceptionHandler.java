@@ -29,7 +29,6 @@ public class CustomExceptionHandler {
   public ResponseEntity<?> handlingPostNotFoundExceptions(){
     return new ResponseEntity<>(Message.fail("NOT_FOUND", "post id is not exist")
             , HttpStatus.NOT_FOUND);
-
   }
   @ExceptionHandler(CommentNotFoundException.class)
   public ResponseEntity<?> handlingCommentNotFoundExceptions(){
