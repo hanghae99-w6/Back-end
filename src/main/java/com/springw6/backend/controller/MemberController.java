@@ -1,12 +1,11 @@
 package com.springw6.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.springw6.backend.controller.request.LoginIdCheckRequestDto;
-import com.springw6.backend.controller.request.LoginRequestDto;
-import com.springw6.backend.controller.request.NicknameCheckRequestDto;
-import com.springw6.backend.controller.request.SignupRequestDto;
+import com.springw6.backend.controller.request.*;
+import com.springw6.backend.domain.Message;
 import com.springw6.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,9 +44,10 @@ public class MemberController {
     }
 
     @GetMapping("/members/kakao/callback")
-    public String kakaoLogin(@RequestParam String code) throws JsonProcessingException {
-        memberService.kakaoLogin(code);
-        return "redirect:/kakao";
+    public ResponseEntity<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        TokenDto tokenDto= memberService.kakaoLogin(code);
+        tokenDto.tokenToHeaders(response);
+        return new ResponseEntity<>(Message.success("로그인에 성공하였습니다."), HttpStatus.OK);
     }
 
 }

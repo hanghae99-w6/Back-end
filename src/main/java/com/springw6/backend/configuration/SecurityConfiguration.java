@@ -91,6 +91,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
               .antMatchers("/subComment/**").permitAll()
               .antMatchers("/likes/**").permitAll()
               .antMatchers("/upload/**").permitAll()
+              .antMatchers("/kakao/**").permitAll()
               .antMatchers("/h2-console/**").permitAll()
               .anyRequest().authenticated()
 

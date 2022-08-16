@@ -11,6 +11,7 @@ import com.springw6.backend.domain.UserDetailsImpl;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -132,7 +133,7 @@ public class MemberService {
    }
 
 
-   public void kakaoLogin(String code) throws JsonProcessingException {
+   public TokenDto kakaoLogin(String code) throws JsonProcessingException {
       // 1. "인가 코드"로 "액세스 토큰" 요청
       String accessToken = getAccessToken(code);
       // 2. 토큰으로 카카오 API 호출
@@ -165,6 +166,10 @@ public class MemberService {
       Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
       SecurityContextHolder.getContext().setAuthentication(authentication);
 
+      Member member = isPresentLoginId(kakaoUser.getLoginId());
+      TokenDto tokenDto = tokenProvider.generateTokenDto(member);
+      return tokenDto;
+
    }
 
    @Value("${myKaKaoRestAplKey}")
@@ -180,7 +185,7 @@ public class MemberService {
       MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
       body.add("grant_type", "authorization_code");
       body.add("client_id", myKaKaoRestAplKey);
-      body.add("redirect_uri", "http://localhost:8080/members/kakao/callback");
+      body.add("redirect_uri", "http://localhost:3000/kakao/callback");
       body.add("code", code);
 
       // HTTP 요청 보내기
@@ -226,7 +231,7 @@ public class MemberService {
       String nickname = jsonNode.get("properties")
               .get("nickname").asText();
       String loginId = jsonNode.get("kakao_account")
-              .get("loginId").asText();
+              .get("email").asText();
 
       System.out.println("카카오 사용자 정보: " + id + ", " + nickname + ", " + loginId);
       return new KakaoUserInfoDto(id, nickname, loginId);
