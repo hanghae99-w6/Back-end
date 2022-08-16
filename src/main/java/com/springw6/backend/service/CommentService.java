@@ -11,6 +11,8 @@ import com.springw6.backend.repository.SubCommentRepository;
 //import com.springw6.backend.repository.CommentLikeRepository;
 //import com.springw6.backend.repository.SubCommentLikeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,15 +34,15 @@ public class CommentService {
   private final PostService postService;
 
   @Transactional
-  public ResponseDto<?> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
+  public ResponseEntity<?> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid"), HttpStatus.UNAUTHORIZED);
     }
 
     Post post = postService.isPresentPost(requestDto.getPostId());
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "post id is not exist");
+      return new ResponseEntity<>(Message.fail("NOT_FOUND", "post id is not exist"), HttpStatus.NOT_FOUND);
     }
 
     Comment comment = Comment.builder()
@@ -50,7 +52,7 @@ public class CommentService {
         .build();
     commentRepository.save(comment);
 
-    return ResponseDto.success(
+    return new ResponseEntity<>(Message.success(
         CommentResponseDto.builder()
             .id(comment.getId())
             .postId(comment.getPost().getId())
@@ -59,14 +61,15 @@ public class CommentService {
             .createdAt(comment.getCreatedAt())
             .modifiedAt(comment.getModifiedAt())
             .build()
-    );
+    )
+    ,HttpStatus.OK);
   }
 
   @Transactional(readOnly = true)
-  public ResponseDto<?> getAllCommentsByPost(Long postId) {
+  public ResponseEntity<?> getAllCommentsByPost(Long postId) {
     Post post = postService.isPresentPost(postId);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "post id is not exist");
+      return new ResponseEntity<>(Message.fail("NOT_FOUND", "post id is not exist"), HttpStatus.NOT_FOUND);
     }
 
     List<Comment> commentList = commentRepository.findAllByPost(post);
@@ -103,55 +106,54 @@ public class CommentService {
                       .build()
       );
     }
-    return ResponseDto.success(
-            commentResponseDtoList
-    );
+    return new ResponseEntity<>(Message.success(commentResponseDtoList),HttpStatus.OK);
   }
 
-  @Transactional(readOnly = true)
-  public ResponseDto<?> getAllCommentsByMember(HttpServletRequest request) {
-    Member member = validateMember(request);
-    if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
-    }
-
-    List<Comment> commentList = commentRepository.findAllByMember(member);
-    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-
-    for (Comment comment : commentList) {
-      commentResponseDtoList.add(
-          CommentResponseDto.builder()
-              .id(comment.getId())
-              .author(comment.getMember().getNickname())
-              .comment(comment.getComment())
-//              .likes(countLikesComment(comment))
-              .createdAt(comment.getCreatedAt())
-              .modifiedAt(comment.getModifiedAt())
-              .build()
-      );
-    }
-    return ResponseDto.success(commentResponseDtoList);
-  }
+  //멤버별 코멘트 불러오기
+//  @Transactional(readOnly = true)
+//  public ResponseEntity<?> getAllCommentsByMember(HttpServletRequest request) {
+//    Member member = validateMember(request);
+//    if (null == member) {
+//      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid"), HttpStatus.UNAUTHORIZED);
+//    }
+//
+//    List<Comment> commentList = commentRepository.findAllByMember(member);
+//    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+//
+//    for (Comment comment : commentList) {
+//      commentResponseDtoList.add(
+//          CommentResponseDto.builder()
+//              .id(comment.getId())
+//              .author(comment.getMember().getNickname())
+//              .comment(comment.getComment())
+////              .likes(countLikesComment(comment))
+//              .createdAt(comment.getCreatedAt())
+//              .modifiedAt(comment.getModifiedAt())
+//              .build()
+//      );
+//    }
+//    return new ResponseEntity<>(Message.success(commentResponseDtoList),HttpStatus.OK);
+//  }
 
   @Transactional
-  public ResponseDto<?> updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
+  public ResponseEntity<?> updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid"), HttpStatus.UNAUTHORIZED);
     }
 
     Post post = postService.isPresentPost(requestDto.getPostId());
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "post id is not exist");
+      return new ResponseEntity<>(Message.fail("NOT_FOUND", "post id is not exist"), HttpStatus.NOT_FOUND);
     }
 
     Comment comment = isPresentComment(id);
     if (null == comment) {
-      return ResponseDto.fail("NOT_FOUND", "comment id is not exist");
+      return new ResponseEntity<>(Message.fail("NOT_FOUND", "comment id is not exist"),HttpStatus.NOT_FOUND);
     }
 
     if (comment.validateMember(member)) {
-      return ResponseDto.fail("BAD_REQUEST", "only author can update");
+      return new ResponseEntity<>(Message.fail("BAD_REQUEST", "only author can update"),HttpStatus.BAD_REQUEST);
     }
 
     List<SubComment> subCommentList = subCommentRepository.findAllByCommentId(comment.getId());
@@ -170,7 +172,7 @@ public class CommentService {
     }
 
     comment.update(requestDto);
-    return ResponseDto.success(
+    return new ResponseEntity<>(Message.success(
         CommentResponseDto.builder()
             .id(comment.getId())
             .author(comment.getMember().getNickname())
@@ -180,23 +182,24 @@ public class CommentService {
             .createdAt(comment.getCreatedAt())
             .modifiedAt(comment.getModifiedAt())
             .build()
-    );
+    )
+            ,HttpStatus.OK);
   }
 
   @Transactional
-  public ResponseDto<?> deleteComment(Long id, HttpServletRequest request) {
+  public ResponseEntity<?> deleteComment(Long id, HttpServletRequest request) {
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "refresh token is invalid");
+      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid"), HttpStatus.UNAUTHORIZED);
     }
 
     Comment comment = isPresentComment(id);
     if (null == comment) {
-      return ResponseDto.fail("NOT_FOUND", "comment id is not exist");
+      return new ResponseEntity<>(Message.fail("NOT_FOUND", "comment id is not exist"),HttpStatus.NOT_FOUND);
     }
 
     if (comment.validateMember(member)) {
-      return ResponseDto.fail("BAD_REQUEST", "only author can update");
+      return new ResponseEntity<>(Message.fail("BAD_REQUEST", "only author can update"),HttpStatus.BAD_REQUEST);
     }
 
     List<SubComment> subCommentList = subCommentRepository.findAllByCommentId(comment.getId());
@@ -205,7 +208,7 @@ public class CommentService {
     }
 
     commentRepository.delete(comment);
-    return ResponseDto.success("success");
+    return new ResponseEntity<>(Message.success("success"),HttpStatus.OK);
   }
 //
 //  @Transactional(readOnly = true)
