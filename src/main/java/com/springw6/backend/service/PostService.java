@@ -6,6 +6,8 @@ import com.springw6.backend.domain.*;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
@@ -21,22 +23,20 @@ public class PostService {
 
 
   @Transactional
-  public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
+  public ResponseEntity<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
 //    isRefreshTokenCheck(request);
 //    isAuthorizationCheck(request);
 //    isTest(request);
 
     if (null == request.getHeader("Refresh-Token")) {
-      ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다");
+      return new ResponseEntity<>(Message.fail("MEMBER_NOT_FOUND","로그인이 필요합니다"), HttpStatus.NOT_FOUND);
     }
     if (null == request.getHeader("Authorization")) {
-      ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다");
+      return new ResponseEntity<>(Message.fail("No_Authorization", "로그인이 필요합니다"), HttpStatus.UNAUTHORIZED);
     }
-    Member member = validateMember(request);
+      Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "Token이 유효하지 않습니다."), HttpStatus.UNAUTHORIZED);
     }
 
     Post post = Post.builder()
@@ -48,7 +48,7 @@ public class PostService {
             .category(requestDto.getCategory())
             .build();
     postRepository.save(post);
-    return ResponseDto.success(
+    return new ResponseEntity<>(Message.success(
             PostResponseDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
@@ -60,14 +60,15 @@ public class PostService {
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build()
-    );
+    )
+    , HttpStatus.OK);
   }
 
   @Transactional(readOnly = true)
-  public ResponseDto<?> getPost(Long id) {
+  public ResponseEntity<?> getPost(Long id) {
     Post post = isPresentPost(id);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      return new ResponseEntity<>(Message.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다."),HttpStatus.NOT_FOUND);
     }
 
 //    List<Comment> commentList = commentRepository.findAllByPost(post);
@@ -91,7 +92,7 @@ public class PostService {
 //
 //    System.out.println("[게시글 조회] 해당 게시물의 댓글 리스트 DTO (commentResponseDtoList): " + commentResponseDtoList);
 
-    return ResponseDto.success(
+    return new ResponseEntity<>(Message.success(
             PostResponseDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
@@ -103,44 +104,46 @@ public class PostService {
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build()
-    );
+    )
+            ,HttpStatus.OK);
   }
 
   @Transactional(readOnly = true)
-  public ResponseDto<?> getAllPost() {
-    return ResponseDto.success(postRepository.findAllByOrderByModifiedAtDesc());
+  public ResponseEntity<?> getAllPost() {
+    return new ResponseEntity<>(Message.success(postRepository.findAllByOrderByModifiedAtDesc()), HttpStatus.OK);
   }
 
   @Transactional
-  public ResponseDto<Post> updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
+  public ResponseEntity<?> updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
     if (null == request.getHeader("Refresh-Token")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다.");
+      return new ResponseEntity<>(Message.fail("Refresh_Token is not invalid", "로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
     }
 
     if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다.");
+      return new ResponseEntity<>(Message.fail("No_Authorization","로그인이 필요합니다."),HttpStatus.UNAUTHORIZED);
     }
 
     Member member = validateMember(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "Token이 유효하지 않습니다."),HttpStatus.UNAUTHORIZED);
     }
 
     Post post = isPresentPost(id);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      return new ResponseEntity<>(Message.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다."),HttpStatus.NOT_FOUND);
     }
 
     if (post.validateMember(member)) {
-      return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+      return new ResponseEntity<>(Message.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다."),HttpStatus.UNAUTHORIZED);
     }
 
     post.update(requestDto);
-    return ResponseDto.success(post);
+    return new ResponseEntity<>(Message.success(post),HttpStatus.OK);
   }
 
+
+
+  // DeletePOST는 이전 형식 그대로 , 아직 ResponseEntity 형태로 바꾸지 않았음...
   @Transactional
   public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
     if (null == request.getHeader("Refresh-Token")) {
@@ -170,6 +173,7 @@ public class PostService {
     postRepository.delete(post);
     return ResponseDto.success("delete success");
   }
+
 
   @Transactional(readOnly = true)
   public Post isPresentPost(Long id) {
