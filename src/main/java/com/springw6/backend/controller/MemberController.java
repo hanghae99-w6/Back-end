@@ -5,7 +5,6 @@ import com.springw6.backend.controller.request.LoginIdCheckRequestDto;
 import com.springw6.backend.controller.request.LoginRequestDto;
 import com.springw6.backend.controller.request.NicknameCheckRequestDto;
 import com.springw6.backend.controller.request.SignupRequestDto;
-import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 
 @RestController
 @RequestMapping("/api")
@@ -48,7 +46,7 @@ public class MemberController {
         return memberService.logoutMembers(request);
     }
 
-    @GetMapping("members/kakao/callback")
+    @GetMapping("/members/kakao/callback")
     public String kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         memberService.kakaoLogin(code);
         return "redirect:/kakao";
