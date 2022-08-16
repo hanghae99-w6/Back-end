@@ -6,32 +6,39 @@ import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-//@ConditionalOnDefaultWebSecurity
-//@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-public class SecurityConfiguration {
-
+@ConditionalOnDefaultWebSecurity
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+public class SecurityConfiguration implements WebMvcConfigurer {
     @Value("${jwt.secret}")
     String SECRET_KEY;
     private final TokenProvider tokenProvider;
@@ -45,25 +52,24 @@ public class SecurityConfiguration {
     }
 
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
-        return (web) -> web.ignoring()
-                .antMatchers("/h2-console/**")
-                .antMatchers("/api/members/**")
-                .antMatchers("/favicon.ico");
-
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
+//        return (web) -> web.ignoring()
+//                .antMatchers("/h2-console/**")
+//                .antMatchers("/api/members/**")
+//                .antMatchers("/favicon.ico");
+//
+//    }
 
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             http
+                    .cors().configurationSource(corsConfigurationSource());
 
-                    .csrf().disable()
-                    .cors().configurationSource(corsConfigurationSource())
-                    .and()
+                    http.csrf().disable()
                     .authorizeRequests()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll().and()
 
@@ -82,8 +88,8 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers("/api/members/**").permitAll()
                 .antMatchers("/api/post/**").permitAll()
-                .antMatchers("/api/comment/**").permitAll()
-                .antMatchers("/api/subComment/**").permitAll()
+                .antMatchers("/comment/**").permitAll()
+                .antMatchers("/subComment/**").permitAll()
                 .antMatchers("/api/likes/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
@@ -98,15 +104,16 @@ public class SecurityConfiguration {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+       final CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://3.37.127.16:8080"));
         configuration.addAllowedHeader("*");
+        configuration.addAllowedHeader("Authorization");
         configuration.addAllowedMethod("*");
 //        configuration.setAllowedMethods(Arrays.asList("GET","POST", "OPTIONS", "PUT","DELETE"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L); //preflight 결과를 1시간동안 캐시에 저장
-//        configuration.addExposedHeader("*");
+        configuration.addExposedHeader("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
