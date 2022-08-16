@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 
-@CrossOrigin(origins = "http://localhost:3000")
 public class MemberController {
 
     private final MemberService memberService;
