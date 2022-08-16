@@ -21,14 +21,19 @@ public class CustomExceptionHandler {
     return new ResponseEntity<>(Message.fail("BAD_REQUEST", errorMessage), HttpStatus.BAD_REQUEST);
   }
   @ExceptionHandler(InvalidTokenException.class)
-  public ResponseEntity<?> handlingInvalidExceptions(){
-    return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid")
+  public ResponseEntity<?> handlingInvalidTokenExceptions(){
+    return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "token is invalid")
             , HttpStatus.UNAUTHORIZED);
   }
   @ExceptionHandler(PostNotFoundException.class)
   public ResponseEntity<?> handlingPostNotFoundExceptions(){
     return new ResponseEntity<>(Message.fail("NOT_FOUND", "post id is not exist")
             , HttpStatus.NOT_FOUND);
+  }
+  @ExceptionHandler(SubCommentNotFoundException.class)
+  public ResponseEntity<?> handlingSubCommentNotFoundExceptions(){
+    return new ResponseEntity<>(Message.fail("NOT_FOUND", "sub comment id is not exist")
+            ,HttpStatus.NOT_FOUND);
   }
   @ExceptionHandler(CommentNotFoundException.class)
   public ResponseEntity<?> handlingCommentNotFoundExceptions(){
@@ -37,13 +42,8 @@ public class CustomExceptionHandler {
   }
   @ExceptionHandler(NotAuthorException.class)
   public ResponseEntity<?> handlingNotAuthorExceptions(){
-    return new ResponseEntity<>(Message.fail("BAD_REQUEST", "only author can update")
+    return new ResponseEntity<>(Message.fail("BAD_REQUEST", "작성자가 아닙니다.")
             ,HttpStatus.BAD_REQUEST);
 
-  }
-  @ExceptionHandler(SubCommentNotFoundException.class)
-  public ResponseEntity<?> handlingSubCommentNotFoundExceptions(){
-    return new ResponseEntity<>(Message.fail("NOT_FOUND", "sub comment id is not exist")
-            ,HttpStatus.NOT_FOUND);
   }
 }
