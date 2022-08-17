@@ -1,5 +1,6 @@
 package com.springw6.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.springw6.backend.controller.request.PostRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,16 +40,17 @@ public class Post extends Timestamped {
   @Column
   private Long likes;
 
-
+  @JsonIgnore
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments;
+
 
   @JoinColumn(name = "member_id", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
-
-  @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-  private List<Comment> commentList;
+//
+//  @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+//  private List<Comment> commentList;
 
   @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
   private List<Likes> postLikeList;
@@ -61,13 +63,6 @@ public class Post extends Timestamped {
     this.category = postRequestDto.getCategory();
   }
 
-  public void update(String imgUrl) {
-    this.imgUrl = imgUrl;
-  }
-
-  public boolean validateMember(Member member) {
-    return !this.member.equals(member);
-  }
 
   public void updateLikes(Long likes) {
     this.likes = likes;

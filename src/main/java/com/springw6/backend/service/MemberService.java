@@ -4,14 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springw6.backend.controller.request.*;
-import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.domain.Member;
 import com.springw6.backend.domain.Message;
 import com.springw6.backend.domain.UserDetailsImpl;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +34,6 @@ import java.util.UUID;
 public class MemberService {
    private final MemberRepository memberRepository;
    private final PasswordEncoder passwordEncoder;
-   private final AuthenticationManagerBuilder authenticationManagerBuilder;
    private final TokenProvider tokenProvider;
 
    @Transactional

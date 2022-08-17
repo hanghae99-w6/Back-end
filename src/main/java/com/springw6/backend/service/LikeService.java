@@ -1,7 +1,6 @@
 package com.springw6.backend.service;
 
 
-import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.domain.*;
 import com.springw6.backend.exceptions.InvalidTokenException;
 import com.springw6.backend.exceptions.PostNotFoundException;

@@ -1,7 +1,6 @@
 package com.springw6.backend.controller;
 
 import com.springw6.backend.controller.request.SubCommentRequestDto;
-import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.service.SubCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
