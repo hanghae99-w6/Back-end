@@ -24,9 +24,7 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
-import java.util.TimeZone;
 
 @Configuration
 @EnableWebSecurity
