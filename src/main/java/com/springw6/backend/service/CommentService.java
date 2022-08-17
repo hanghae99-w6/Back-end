@@ -11,8 +11,6 @@ import com.springw6.backend.exceptions.PostNotFoundException;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.CommentRepository;
 import com.springw6.backend.repository.SubCommentRepository;
-//import com.springw6.backend.repository.CommentLikeRepository;
-//import com.springw6.backend.repository.SubCommentLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +28,6 @@ public class CommentService {
 
    private final CommentRepository commentRepository;
    private final SubCommentRepository subCommentRepository;
-//  private final CommentLikeRepository commentLikeRepository;
-//  private final SubCommentLikeRepository subCommentLikeRepository;
-
    private final TokenProvider tokenProvider;
    private final PostService postService;
 
@@ -60,6 +55,7 @@ public class CommentService {
                       .id(comment.getId())
                       .postId(comment.getPost().getId())
                       .author(comment.getMember().getNickname())
+                      .likes(0L)
                       .comment(comment.getComment())
                       .createdAt(comment.getCreatedAt())
                       .modifiedAt(comment.getModifiedAt())
@@ -100,9 +96,10 @@ public class CommentService {
          commentResponseDtoList.add(
                  CommentResponseDto.builder()
                          .id(comment.getId())
+                         .postId(postId)
                          .author(comment.getMember().getNickname())
                          .comment(comment.getComment())
-                         .subComment(subCommentResponseDtoList) // 여기에 대댓글 넣기
+                         .subComment(subCommentResponseDtoList)
                          .likes(comment.getLikes())
                          .createdAt(comment.getCreatedAt())
                          .modifiedAt(comment.getModifiedAt())
@@ -112,31 +109,6 @@ public class CommentService {
       return new ResponseEntity<>(Message.success(commentResponseDtoList), HttpStatus.OK);
    }
 
-   //멤버별 코멘트 불러오기
-//  @Transactional(readOnly = true)
-//  public ResponseEntity<?> getAllCommentsByMember(HttpServletRequest request) {
-//    Member member = validateMember(request);
-//    if (null == member) {
-//      return new ResponseEntity<>(Message.fail("INVALID_TOKEN", "refresh token is invalid"), HttpStatus.UNAUTHORIZED);
-//    }
-//
-//    List<Comment> commentList = commentRepository.findAllByMember(member);
-//    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-//
-//    for (Comment comment : commentList) {
-//      commentResponseDtoList.add(
-//          CommentResponseDto.builder()
-//              .id(comment.getId())
-//              .author(comment.getMember().getNickname())
-//              .comment(comment.getComment())
-////              .likes(countLikesComment(comment))
-//              .createdAt(comment.getCreatedAt())
-//              .modifiedAt(comment.getModifiedAt())
-//              .build()
-//      );
-//    }
-//    return new ResponseEntity<>(Message.success(commentResponseDtoList),HttpStatus.OK);
-//  }
 
    @Transactional
    public ResponseEntity<?> updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
@@ -155,7 +127,7 @@ public class CommentService {
          throw new CommentNotFoundException();
       }
 
-      if (comment.validateMember(member)) {
+      if (!comment.getMember().getNickname().equals(member.getNickname())) {
          throw new NotAuthorException();
       }
 
@@ -167,7 +139,7 @@ public class CommentService {
                          .id(subComment.getId())
                          .subComment(subComment.getSubComment())
                          .author(subComment.getMember().getNickname())
-//              .likes(countLikesSubCommentLike(subComment))
+                         .likes(subComment.getLikes())
                          .createdAt(subComment.getCreatedAt())
                          .modifiedAt(subComment.getModifiedAt())
                          .build()
@@ -180,7 +152,7 @@ public class CommentService {
                       .id(comment.getId())
                       .author(comment.getMember().getNickname())
                       .comment(comment.getComment())
-//            .likes(countLikesComment(comment))
+                      .likes(comment.getLikes())
                       .subComment(subCommentResponseDtoList)
                       .createdAt(comment.getCreatedAt())
                       .modifiedAt(comment.getModifiedAt())
@@ -201,7 +173,7 @@ public class CommentService {
          throw new CommentNotFoundException();
       }
 
-      if (comment.validateMember(member)) {
+      if (!comment.getMember().getNickname().equals(member.getNickname())) {
          throw new NotAuthorException();
       }
 

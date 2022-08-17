@@ -9,28 +9,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
-import java.util.List;
+import java.util.TimeZone;
 
 @Configuration
 @EnableWebSecurity
@@ -88,9 +84,11 @@ public class SecurityConfiguration implements WebMvcConfigurer {
               .antMatchers("/members/**").permitAll()
               .antMatchers("/post/**").permitAll()
               .antMatchers("/comment/**").permitAll()
+              .antMatchers("/main/**").permitAll()
               .antMatchers("/subComment/**").permitAll()
               .antMatchers("/likes/**").permitAll()
               .antMatchers("/upload/**").permitAll()
+              .antMatchers("/kakao/**").permitAll()
               .antMatchers("/h2-console/**").permitAll()
               .anyRequest().authenticated()
 
