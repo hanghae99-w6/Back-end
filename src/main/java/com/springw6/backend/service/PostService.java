@@ -10,6 +10,8 @@ import com.springw6.backend.exceptions.PostNotFoundException;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,20 +23,14 @@ import java.util.Optional;
 public class PostService {
 
    private final PostRepository postRepository;
-   private final CommentRepository commentRepository;
    private final TokenProvider tokenProvider;
 
 
    @Transactional
-   public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
-//    isRefreshTokenCheck(request);
-//    isAuthorizationCheck(request);
-//    isTest(request);
+   public ResponseEntity<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
 
       if (null == request.getHeader("Refresh-Token")) {
          throw new InvalidTokenException();
-//      ResponseDto.fail("MEMBER_NOT_FOUND",
-//              "로그인이 필요합니다");
       }
       if (null == request.getHeader("Authorization")) {
          throw new InvalidAccessTokenException();
@@ -49,11 +45,12 @@ public class PostService {
               .content(requestDto.getContent())
               .imgUrl(requestDto.getImgUrl())
               .member(member)
+              .likes(0L)
               .star(requestDto.getStar())
               .category(requestDto.getCategory())
               .build();
       postRepository.save(post);
-      return ResponseDto.success(
+      return new ResponseEntity<>(Message.success(
               PostResponseDto.builder()
                       .id(post.getId())
                       .title(post.getTitle())
@@ -65,59 +62,45 @@ public class PostService {
                       .createdAt(post.getCreatedAt())
                       .modifiedAt(post.getModifiedAt())
                       .build()
-      );
+      ), HttpStatus.OK);
    }
 
    @Transactional(readOnly = true)
-   public ResponseDto<?> getPost(Long id) {
+   public ResponseEntity<?> getPost(Long id) {
       Post post = isPresentPost(id);
       if (null == post) {
          throw new PostNotFoundException();
       }
 
-//    List<Comment> commentList = commentRepository.findAllByPost(post);
-//
-//    System.out.println("[게시글 조회] 해당 게시물의 댓글 리스트 (commentList): " + commentList);
-//
-//    List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-//
-//    for (Comment comment : commentList) {
-//      commentResponseDtoList.add(
-//                              CommentResponseDto.builder()
-//                                      .id(comment.getId())
-////                                      .author(comment.getMember().getNickname())
-////                      .content(comment.getContent())
-//                                      .likes(comment.getLikes())
-//                                      .createdAt(comment.getCreatedAt())
-//                      .modifiedAt(comment.getModifiedAt())
-//                      .build()
-//      );
-//    }
-//
-//    System.out.println("[게시글 조회] 해당 게시물의 댓글 리스트 DTO (commentResponseDtoList): " + commentResponseDtoList);
-
-      return ResponseDto.success(
+      return new ResponseEntity<>(Message.success(
               PostResponseDto.builder()
                       .id(post.getId())
                       .title(post.getTitle())
                       .content(post.getContent())
-//                    .commentResponseDtoList(commentResponseDtoList)
                       .star((post.getStar()))
                       .imgUrl(post.getImgUrl())
                       .likes(post.getLikes())
                       .createdAt(post.getCreatedAt())
                       .modifiedAt(post.getModifiedAt())
                       .build()
-      );
+      ),HttpStatus.OK);
    }
 
    @Transactional(readOnly = true)
-   public ResponseDto<?> getAllPost() {
-      return ResponseDto.success(postRepository.findAllByOrderByModifiedAtDesc());
+   public ResponseEntity<?> getAllPost() {
+      return  new ResponseEntity<>(Message.success(postRepository.findAllByOrderByModifiedAtDesc())
+              ,HttpStatus.OK);
    }
 
+   @Transactional(readOnly = true)
+   public ResponseEntity<?> getPost(String category) {
+      return  new ResponseEntity<>(Message.success(postRepository.findByCategoryOrderByCreatedAtDesc(category))
+              ,HttpStatus.OK);
+   }
+
+
    @Transactional
-   public ResponseDto<Post> updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
+   public ResponseEntity<?> updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
       if (null == request.getHeader("Refresh-Token")) {
          throw new InvalidTokenException();
       }
@@ -136,16 +119,16 @@ public class PostService {
          throw new PostNotFoundException();
       }
 
-      if (post.validateMember(member)) {
+      if (post.getMember().getId()!=member.getId()) {
          throw new NotAuthorException();
       }
 
       post.update(requestDto);
-      return ResponseDto.success(post);
+      return new ResponseEntity<>(Message.success(post),HttpStatus.OK);
    }
 
    @Transactional
-   public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
+   public ResponseEntity<?> deletePost(Long id, HttpServletRequest request) {
       if (null == request.getHeader("Refresh-Token")) {
          throw new InvalidTokenException();
       }
@@ -163,13 +146,12 @@ public class PostService {
       if (null == post) {
          throw new PostNotFoundException();
       }
-
-      if (post.validateMember(member)) {
+      if (post.getMember().getId()!=member.getId()) {
          throw new NotAuthorException();
       }
 
       postRepository.delete(post);
-      return ResponseDto.success("delete success");
+      return new ResponseEntity<>(Message.success("delete success"),HttpStatus.OK);
    }
 
    @Transactional(readOnly = true)

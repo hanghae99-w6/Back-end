@@ -1,12 +1,12 @@
 package com.springw6.backend.service;
 
 
-import com.springw6.backend.controller.response.ResponseDto;
 import com.springw6.backend.domain.*;
 import com.springw6.backend.exceptions.InvalidTokenException;
 import com.springw6.backend.exceptions.PostNotFoundException;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.*;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Getter
 @RequiredArgsConstructor
 public class LikeService {
 
@@ -148,6 +150,18 @@ public class LikeService {
               subCommentLikeRepository.findByMemberAndSubComment(member, subComment);
       return optionalSubCommentLike.orElse(null);
    }
+   @Transactional(readOnly = true)
+   public List<Long> likedPostList(HttpServletRequest request) {
+      Member member = validateMember(request);
+      List<Long> list=new ArrayList<>();
+      for (Likes post : postLikeRepository.findAllByMemberOrderByPost(member)) {
+         list.add(post.getPost().getId());
+      }
+
+
+      return list;
+   }
+
 
    @Transactional(readOnly = true)
    public int countLikesPost(Post post) {
