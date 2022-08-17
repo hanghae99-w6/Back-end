@@ -12,6 +12,7 @@ import com.springw6.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
@@ -19,59 +20,60 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
 
-  private final PostRepository postRepository;
-  private final CommentRepository commentRepository;
-  private final TokenProvider tokenProvider;
+   private final PostRepository postRepository;
+   private final CommentRepository commentRepository;
+   private final TokenProvider tokenProvider;
 
 
-  @Transactional
-  public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
+   @Transactional
+   public ResponseDto<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
 //    isRefreshTokenCheck(request);
 //    isAuthorizationCheck(request);
 //    isTest(request);
 
-    if (null == request.getHeader("Refresh-Token")) {
-      throw new InvalidTokenException();
+      if (null == request.getHeader("Refresh-Token")) {
+         throw new InvalidTokenException();
 //      ResponseDto.fail("MEMBER_NOT_FOUND",
 //              "로그인이 필요합니다");
-    }
-    if (null == request.getHeader("Authorization")) {
-      throw new InvalidAccessTokenException();
-    }
-    Member member = validateMember(request);
-    if (null == member) {
-throw new InvalidTokenException();    }
+      }
+      if (null == request.getHeader("Authorization")) {
+         throw new InvalidAccessTokenException();
+      }
+      Member member = validateMember(request);
+      if (null == member) {
+         throw new InvalidTokenException();
+      }
 
-    Post post = Post.builder()
-            .title(requestDto.getTitle())
-            .content(requestDto.getContent())
-            .imgUrl(requestDto.getImgUrl())
-            .member(member)
-            .star(requestDto.getStar())
-            .category(requestDto.getCategory())
-            .build();
-    postRepository.save(post);
-    return ResponseDto.success(
-            PostResponseDto.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .content(post.getContent())
-                    .imgUrl(post.getImgUrl())
-                    .star(post.getStar())
-                    .category(post.getCategory())
-                    .likes(post.getLikes())
-                    .createdAt(post.getCreatedAt())
-                    .modifiedAt(post.getModifiedAt())
-                    .build()
-    );
-  }
+      Post post = Post.builder()
+              .title(requestDto.getTitle())
+              .content(requestDto.getContent())
+              .imgUrl(requestDto.getImgUrl())
+              .member(member)
+              .star(requestDto.getStar())
+              .category(requestDto.getCategory())
+              .build();
+      postRepository.save(post);
+      return ResponseDto.success(
+              PostResponseDto.builder()
+                      .id(post.getId())
+                      .title(post.getTitle())
+                      .content(post.getContent())
+                      .imgUrl(post.getImgUrl())
+                      .star(post.getStar())
+                      .category(post.getCategory())
+                      .likes(post.getLikes())
+                      .createdAt(post.getCreatedAt())
+                      .modifiedAt(post.getModifiedAt())
+                      .build()
+      );
+   }
 
-  @Transactional(readOnly = true)
-  public ResponseDto<?> getPost(Long id) {
-    Post post = isPresentPost(id);
-    if (null == post) {
-      throw new PostNotFoundException();
-    }
+   @Transactional(readOnly = true)
+   public ResponseDto<?> getPost(Long id) {
+      Post post = isPresentPost(id);
+      if (null == post) {
+         throw new PostNotFoundException();
+      }
 
 //    List<Comment> commentList = commentRepository.findAllByPost(post);
 //
@@ -94,111 +96,113 @@ throw new InvalidTokenException();    }
 //
 //    System.out.println("[게시글 조회] 해당 게시물의 댓글 리스트 DTO (commentResponseDtoList): " + commentResponseDtoList);
 
-    return ResponseDto.success(
-            PostResponseDto.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .content(post.getContent())
+      return ResponseDto.success(
+              PostResponseDto.builder()
+                      .id(post.getId())
+                      .title(post.getTitle())
+                      .content(post.getContent())
 //                    .commentResponseDtoList(commentResponseDtoList)
-                    .star((post.getStar()))
-                    .imgUrl(post.getImgUrl())
-                    .likes(post.getLikes())
-                    .createdAt(post.getCreatedAt())
-                    .modifiedAt(post.getModifiedAt())
-                    .build()
-    );
-  }
+                      .star((post.getStar()))
+                      .imgUrl(post.getImgUrl())
+                      .likes(post.getLikes())
+                      .createdAt(post.getCreatedAt())
+                      .modifiedAt(post.getModifiedAt())
+                      .build()
+      );
+   }
 
-  @Transactional(readOnly = true)
-  public ResponseDto<?> getAllPost() {
-    return ResponseDto.success(postRepository.findAllByOrderByModifiedAtDesc());
-  }
+   @Transactional(readOnly = true)
+   public ResponseDto<?> getAllPost() {
+      return ResponseDto.success(postRepository.findAllByOrderByModifiedAtDesc());
+   }
 
-  @Transactional
-  public ResponseDto<Post> updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
-    if (null == request.getHeader("Refresh-Token")) {
-      throw new InvalidTokenException();
-    }
+   @Transactional
+   public ResponseDto<Post> updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
+      if (null == request.getHeader("Refresh-Token")) {
+         throw new InvalidTokenException();
+      }
 
-    if (null == request.getHeader("Authorization")) {
-      throw new InvalidAccessTokenException();
-    }
+      if (null == request.getHeader("Authorization")) {
+         throw new InvalidAccessTokenException();
+      }
 
-    Member member = validateMember(request);
-    if (null == member) {
-      throw new InvalidTokenException();
-    }
+      Member member = validateMember(request);
+      if (null == member) {
+         throw new InvalidTokenException();
+      }
 
-    Post post = isPresentPost(id);
-    if (null == post) {
-      throw new PostNotFoundException();
-    }
+      Post post = isPresentPost(id);
+      if (null == post) {
+         throw new PostNotFoundException();
+      }
 
-    if (post.validateMember(member)) {
-      throw new NotAuthorException();
-    }
+      if (post.validateMember(member)) {
+         throw new NotAuthorException();
+      }
 
-    post.update(requestDto);
-    return ResponseDto.success(post);
-  }
+      post.update(requestDto);
+      return ResponseDto.success(post);
+   }
 
-  @Transactional
-  public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
-    if (null == request.getHeader("Refresh-Token")) {
-throw new InvalidTokenException();    }
+   @Transactional
+   public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
+      if (null == request.getHeader("Refresh-Token")) {
+         throw new InvalidTokenException();
+      }
 
-    if (null == request.getHeader("Authorization")) {throw new InvalidAccessTokenException();
-    }
+      if (null == request.getHeader("Authorization")) {
+         throw new InvalidAccessTokenException();
+      }
 
-    Member member = validateMember(request);
-    if (null == member) {
-      throw new InvalidTokenException();
-    }
+      Member member = validateMember(request);
+      if (null == member) {
+         throw new InvalidTokenException();
+      }
 
-    Post post = isPresentPost(id);
-    if (null == post) {
-throw new PostNotFoundException();    }
+      Post post = isPresentPost(id);
+      if (null == post) {
+         throw new PostNotFoundException();
+      }
 
-    if (post.validateMember(member)) {
-      return ResponseDto.fail("BAD_REQUEST", "작성자만 삭제할 수 있습니다.");
-    }
+      if (post.validateMember(member)) {
+         throw new NotAuthorException();
+      }
 
-    postRepository.delete(post);
-    return ResponseDto.success("delete success");
-  }
+      postRepository.delete(post);
+      return ResponseDto.success("delete success");
+   }
 
-  @Transactional(readOnly = true)
-  public Post isPresentPost(Long id) {
-    Optional<Post> optionalPost = postRepository.findById(id);
-    return optionalPost.orElse(null);
-  }
+   @Transactional(readOnly = true)
+   public Post isPresentPost(Long id) {
+      Optional<Post> optionalPost = postRepository.findById(id);
+      return optionalPost.orElse(null);
+   }
 
-  @Transactional
-  public Member validateMember(HttpServletRequest request) {
-    if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-      return null;
-    }
-    return tokenProvider.getMemberFromAuthentication();
-  }
+   @Transactional
+   public Member validateMember(HttpServletRequest request) {
+      if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+         return null;
+      }
+      return tokenProvider.getMemberFromAuthentication();
+   }
 
-  public void isRefreshTokenCheck(HttpServletRequest request) {
-    if (null == request.getHeader("Refresh-Token")) {
-      ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다");
-    }
-  }
+   public void isRefreshTokenCheck(HttpServletRequest request) {
+      if (null == request.getHeader("Refresh-Token")) {
+        throw new InvalidTokenException();
+      }
+   }
 
-  public void isAuthorizationCheck(HttpServletRequest request) {
-    if (null == request.getHeader("Authorization")) {
-      ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다");
-    }
-  }
-  public void isTest(HttpServletRequest request){
-    Member member = validateMember(request);
-    if (null == member) {
-      ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-    }
-  }
+   public void isAuthorizationCheck(HttpServletRequest request) {
+      if (null == request.getHeader("Authorization")) {
+         throw new InvalidTokenException();
+      }
+   }
+
+   public void isTest(HttpServletRequest request) {
+      Member member = validateMember(request);
+      if (null == member) {
+         throw new InvalidTokenException();
+      }
+   }
 
 }
