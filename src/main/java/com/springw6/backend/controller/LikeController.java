@@ -1,23 +1,36 @@
 package com.springw6.backend.controller;
 
 
+import com.springw6.backend.domain.Likes;
+import com.springw6.backend.domain.Member;
+import com.springw6.backend.domain.Post;
+import com.springw6.backend.repository.PostLikeRepository;
 import com.springw6.backend.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
 public class LikeController {
     private final LikeService likeService;
+    private final PostLikeRepository postLikeRepository;
 
     @PostMapping("/auth/postlikes/{id}")
     public ResponseEntity<?> postLikes(@PathVariable Long id, HttpServletRequest request) {
         return likeService.postLikes(id,request);
+    }
+    @GetMapping("/auth/likedpost")
+    public List<Long> likedPost(HttpServletRequest request){
+       return likeService.likedPostList(request);
     }
 
     @PostMapping("/auth/commentlikes/{id}")

@@ -94,7 +94,7 @@ public class PostService {
 
    @Transactional(readOnly = true)
    public ResponseEntity<?> getPost(String category) {
-      return  new ResponseEntity<>(Message.success(postRepository.findByCategoryOrderByModifiedAtDesc(category))
+      return  new ResponseEntity<>(Message.success(postRepository.findByCategoryOrderByCreatedAtDesc(category))
               ,HttpStatus.OK);
    }
 
