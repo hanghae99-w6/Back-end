@@ -24,9 +24,13 @@
 
 
 😎 백엔드 팀원 소개
-이름	깃허브 주소
-이길종	https://github.com/lucy-pill
-이장원	https://github.com/BUMSUSHN
+
+    이름	깃허브 주소
+
+    이길종	https://github.com/lucy-pill
+
+    이장원	https://github.com/BUMSUSHN
+
 📚 와이어 프레임 / API 명세서
 여기를 눌러주세요
 
