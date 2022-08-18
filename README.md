@@ -105,13 +105,6 @@ String nickname = jsonNode.get("properties")
 <summary>(2) CORS문제 설정 다 했음에도 안됨</summary>
 <div markdown="1">
 ```java
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
- http
-          .cors().configurationSource(corsConfigurationSource());
-          ...후략...
-```
-
-```java
 @Bean
     public CorsConfigurationSource corsConfigurationSource() {
        final CorsConfiguration configuration = new CorsConfiguration();
