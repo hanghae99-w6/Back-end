@@ -5,6 +5,7 @@
 
 
 ### 1. 제작 기간 & 팀원 소개
+
 5인 4조 팀 프로젝트
 이길종 : 
 이장원 : 
@@ -47,9 +48,14 @@ Front-end :
 
 (1) 로그인 후 새로고침 시 로그아웃되는 문제 : 회원가입이 되어있는지 확인가능한 API 생성하여 FE 에서 API 요청하면 BE 에서 User 정보를 보내줌, 
 매 기능마다 FE 에서 header 에서 토큰을 포함해서 전달하면 유효한지 여부 상호 확인
+
 (2) json parse error : FE(Object) <-> BE(String) /  (BE) List 형태로 데이터 Request 요청 ( FE ) List 형태에서 바로 값만 꺼내서 사용함.
+
 (3) 배열 안의 배열 json 형태로 전달하기(게시글 작성 시 Todolist) : (FE) [] 제거함
+
 (4) POST ) imageUrl을 Return 값으로 드린 후, 다시 ${payload.imageUrl} 로 POST 를 했을 때 값이 안담기는 경우 :  
 이미지 저장 경로 Ubuntu 서버 -> S3 서버로 변경 후 API 통합하여 전체 데이터로 받음.
+
 (5) Web Configer, CORS filter를 사용하였는데 JWT filter와 충돌 : Web Configer 만 사용, CorsConfigurationSource @Bean 생성
+
 (6) 이미지, 게시글 내용 함께 POST 시 header 에 Content type 누락 : JSON, form 데이터 모두 넣기  "
