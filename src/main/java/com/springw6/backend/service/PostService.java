@@ -65,6 +65,7 @@ public class PostService {
       ), HttpStatus.OK);
    }
 
+
    @Transactional(readOnly = true)
    public ResponseEntity<?> getPost(Long id) {
       Post post = isPresentPost(id);
