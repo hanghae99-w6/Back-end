@@ -35,9 +35,4 @@ public class SubCommentController {
       HttpServletRequest request) {
     return subCommentService.deleteSubComment(id, request);
   }
-
-  @RequestMapping(value = "/auth/subcomment", method = RequestMethod.GET)
-  public ResponseEntity<?> getAllPostByMember(HttpServletRequest request) {
-    return subCommentService.getAllSubCommentByMember(request);
-  }
 }

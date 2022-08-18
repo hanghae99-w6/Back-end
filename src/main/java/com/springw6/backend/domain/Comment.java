@@ -1,16 +1,14 @@
 package com.springw6.backend.domain;
 
 import com.springw6.backend.controller.request.CommentRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "comment")
@@ -38,17 +36,10 @@ public class Comment extends Timestamped {
   @Column
   private Long likes;
 
-//  @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-//  private List<CommentLike> commentLikeList;
 
   public void update(CommentRequestDto commentRequestDto) {
     this.comment = commentRequestDto.getComment();
   }
-
-  public boolean validateMember(Member member) {
-    return !this.member.equals(member);
-  }
-
   public void updateLikes(Long likes) {
     this.likes = likes;
   }
