@@ -33,16 +33,9 @@ public class CommentService {
 
    @Transactional
    public ResponseEntity<?> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
-      //request에서 받은 토큰 정보에서 멤버 정보 불러오고 없는 경우 예외 반환
       Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
-      //requestDto에서 받은 정보로 포스트 정보 불러오고 없는 경우 예외 반환
       Post post = postService.isPresentPost(requestDto.getPostId());
-      if (null == post) {
-         throw new PostNotFoundException();
-      }
+      postCheck(member, post);
       //빌더 패턴을 이용해 comment 생성 후 저장
       Comment comment = Comment.builder()
               .member(member)
@@ -115,25 +108,12 @@ public class CommentService {
 
    @Transactional
    public ResponseEntity<?> updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
-      //request에서 받은 토큰 정보에서 멤버 정보 불러오고 없는 경우 예외 반환
       Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
-      //requestDto에서 받은 정보로 포스트 정보 불러오고 없는 경우 예외 반환
       Post post = postService.isPresentPost(requestDto.getPostId());
-      if (null == post) {
-         throw new PostNotFoundException();
-      }
+      postCheck(member, post);
       //댓글 정보 조회 후 없는 경우 예외 처리
       Comment comment = isPresentComment(id);
-      if (null == comment) {
-         throw new CommentNotFoundException();
-      }
-      //댓글의 작성자를 닉네임을 통해 비교하고 다른 경우 예외 처리
-      if (!comment.getMember().getNickname().equals(member.getNickname())) {
-         throw new NotAuthorException();
-      }
+      commentCheck(member, comment);
       //댓글 아이디로 대댓글을 찾고 대댓글 만들기 후 업데이트
       List<SubComment> subCommentList = subCommentRepository.findAllByCommentId(comment.getId());
       List<SubCommentResponseDto> subCommentResponseDtoList = new ArrayList<>();
@@ -164,23 +144,15 @@ public class CommentService {
               , HttpStatus.OK);
    }
 
+
    @Transactional
    public ResponseEntity<?> deleteComment(Long id, HttpServletRequest request) {
-      //request에서 받은 토큰 정보에서 멤버 정보 불러오고 없는 경우 예외 반환
       Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
-      //댓글이 존재하면 댓글/아닌 경우 예외 처리
       Comment comment = isPresentComment(id);
-      if (null == comment) {
-         throw new CommentNotFoundException();
-      }
-      //댓글의 작성자를 닉네임을 통해 비교하고 다른 경우 예외 처리
-      if (!comment.getMember().getNickname().equals(member.getNickname())) {
-         throw new NotAuthorException();
-      }
-      //해당 댓글의 대댓글 리스트를 불러오고 대댓글이 있는 경우 삭제 대신 삭제된 댓글이라고 표시
+      //댓글이 존재하면 댓글/아닌 경우 예외 처리
+      commentCheck(member, comment);
+//      //해당 댓글의 대댓글 리스트를 불러오고 대댓글이 있는 경우 삭제 대신 삭제된 댓글이라고 표시
+      //프론트의 요청에 따라 일괄적으로 삭제된 댓글이라고 표시하도록 함
 //      List<SubComment> subCommentList = subCommentRepository.findAllByCommentId(comment.getId());
 //      if (subCommentList.size()!=0){comment.setComment("삭제된 댓글입니다.");} else{
 //            commentRepository.delete(comment);}
@@ -188,6 +160,27 @@ public class CommentService {
       return new ResponseEntity<>(Message.success("success"), HttpStatus.OK);
    }
 
+
+   private void commentCheck(Member member, Comment comment) {
+      if (null == member) {
+         throw new InvalidTokenException();
+      }
+      if (null == comment) {
+         throw new CommentNotFoundException();
+      }
+      //댓글의 작성자를 닉네임을 통해 비교하고 다른 경우 예외 처리
+      if (!comment.getMember().getNickname().equals(member.getNickname())) {
+         throw new NotAuthorException();
+      }
+   }
+   private void postCheck(Member member, Post post) {
+      if (null == member) {
+         throw new InvalidTokenException();
+      }
+      if (null == post) {
+         throw new PostNotFoundException();
+      }
+   }
    @Transactional(readOnly = true)
    public Comment isPresentComment(Long id) {
       //들어온 아이디에 대한 댓글이 존재하면 댓글을 반환하고 없으면 null반환

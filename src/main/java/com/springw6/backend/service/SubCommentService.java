@@ -35,10 +35,10 @@ public class SubCommentService {
    ) {
       //토큰으로 멤버 정보 가져오고 없으면 예외 처리
       Member member = validateMember(request);
-         if (null == member) throw new InvalidTokenException();
+      memberCheck(member);
       //요청에 들어온 댓글 아이디로 댓글 정보 가져오고 없으면 예외처리
       Comment comment = commentService.isPresentComment(requestDto.getCommentId());
-         if (null == comment) throw new CommentNotFoundException();
+      commentCheck(comment);
       //게시글 가져오고, 대댓글을 매핑시키기위해 멤버,댓글,게시글 정보를 추가해줌
       Post post = postService.isPresentPost(comment.getPost().getId());
       SubComment subComment = SubComment.builder()
@@ -62,6 +62,7 @@ public class SubCommentService {
       ), HttpStatus.OK);
    }
 
+
    @Transactional
    public ResponseEntity<?> updateSubComment(
            Long id,
@@ -70,18 +71,10 @@ public class SubCommentService {
    ) {
       //토큰으로 멤버 정보 가져오고 없으면 예외 처리
       Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
+      memberCheck(member);
       //주소값에서 받아온 대댓글 아이디로 대댓글을 찾아서 돌려주고 없으면 예외처리
       SubComment subComment = isPresentSubComment(id);
-      if (null == subComment) {
-         throw new SubCommentNotFoundException();
-      }
-      //대댓글의 작성자와 로그인 된 사용자를 비교하여 다른 경우 예외처리
-      if (!subComment.getMember().getId().equals(member.getId())) {
-         throw new NotAuthorException();
-      }
+      subCommentCheck(member, subComment);
 
       subComment.update(requestDto);
       return new ResponseEntity<>(Message.success(
@@ -103,20 +96,30 @@ public class SubCommentService {
    ) {
       //토큰으로 멤버 정보 가져오고 없으면 예외 처리
       Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
+      memberCheck(member);
       //주소값에서 받아온 대댓글 아이디로 대댓글을 찾아서 돌려주고 없으면 예외처리
       SubComment subComment = isPresentSubComment(id);
-      if (null == subComment) throw new SubCommentNotFoundException();
-      //대댓글의 작성자와 로그인 된 사용자를 비교하여 다른 경우 예외처리
-      if (!subComment.getMember().getId().equals(member.getId())) {
-         throw new NotAuthorException();
-      }
+      subCommentCheck(member, subComment);
       subCommentRepository.delete(subComment);
       return new ResponseEntity<>(Message.success("success"), HttpStatus.OK);
    }
 
+
+   private void memberCheck(Member member) {
+      if (null == member) throw new InvalidTokenException();
+   }
+   private void commentCheck(Comment comment) {
+      if (null == comment) throw new CommentNotFoundException();
+   }
+   private void subCommentCheck(Member member, SubComment subComment) {
+      if (null == subComment) {
+         throw new SubCommentNotFoundException();
+      }
+      //대댓글의 작성자와 로그인 된 사용자를 비교하여 다른 경우 예외처리
+      if (!subComment.getMember().getId().equals(member.getId())) {
+         throw new NotAuthorException();
+      }
+   }
    @Transactional(readOnly = true)
    public SubComment isPresentSubComment(Long id) {
       Optional<SubComment> optionalSubComment = subCommentRepository.findById(id);

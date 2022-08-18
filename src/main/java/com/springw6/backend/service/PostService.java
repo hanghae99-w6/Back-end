@@ -31,16 +31,8 @@ public class PostService {
    @Transactional
    public ResponseEntity<?> createPost(PostRequestDto requestDto, HttpServletRequest request) {
 
-      if (null == request.getHeader("Refresh-Token")) {
-         throw new InvalidTokenException();
-      }
-      if (null == request.getHeader("Authorization")) {
-         throw new InvalidAccessTokenException();
-      }
       Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
+      tokenCheck(request, member);
 
       Post post = Post.builder()
               .title(requestDto.getTitle())
@@ -67,7 +59,6 @@ public class PostService {
                       .build()
       ), HttpStatus.OK);
    }
-
 
    @Transactional(readOnly = true)
    public ResponseEntity<?> getPost(Long id) {
@@ -106,28 +97,9 @@ public class PostService {
 
    @Transactional
    public ResponseEntity<?> updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
-      if (null == request.getHeader("Refresh-Token")) {
-         throw new InvalidTokenException();
-      }
-
-      if (null == request.getHeader("Authorization")) {
-         throw new InvalidAccessTokenException();
-      }
-
       Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
-
       Post post = isPresentPost(id);
-      if (null == post) {
-         throw new PostNotFoundException();
-      }
-
-      if (post.getMember().getId()!=member.getId()) {
-         throw new NotAuthorException();
-      }
-
+      memberCheck(request, member, post);
       post.update(requestDto);
       return new ResponseEntity<>(Message.success(post),HttpStatus.OK);
    }
@@ -137,7 +109,7 @@ public class PostService {
 
       Member member = validateMember(request);
       Post post = isPresentPost(id);
-      Check(request, member, post);
+      memberCheck(request, member, post);
       List<Comment> commentList=commentRepository.findAllByPost(post);
       for (Comment comment : commentList) {
          commentRepository.delete(comment);
@@ -147,7 +119,7 @@ public class PostService {
       return new ResponseEntity<>(Message.success("delete success"),HttpStatus.OK);
    }
 
-   private void Check(HttpServletRequest request, Member member, Post post) {
+   private void memberCheck(HttpServletRequest request, Member member, Post post) {
       if (null == request.getHeader("Refresh-Token")) {
          throw new InvalidTokenException();
       }
@@ -168,6 +140,17 @@ public class PostService {
       }
    }
 
+   private void tokenCheck(HttpServletRequest request, Member member) {
+      if (null == request.getHeader("Refresh-Token")) {
+         throw new InvalidTokenException();
+      }
+      if (null == request.getHeader("Authorization")) {
+         throw new InvalidAccessTokenException();
+      }
+      if (null == member) {
+         throw new InvalidTokenException();
+      }
+   }
    @Transactional(readOnly = true)
    public Post isPresentPost(Long id) {
       Optional<Post> optionalPost = postRepository.findById(id);

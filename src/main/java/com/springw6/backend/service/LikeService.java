@@ -2,8 +2,10 @@ package com.springw6.backend.service;
 
 
 import com.springw6.backend.domain.*;
+import com.springw6.backend.exceptions.CommentNotFoundException;
 import com.springw6.backend.exceptions.InvalidTokenException;
 import com.springw6.backend.exceptions.PostNotFoundException;
+import com.springw6.backend.exceptions.SubCommentNotFoundException;
 import com.springw6.backend.jwt.TokenProvider;
 import com.springw6.backend.repository.*;
 import lombok.Getter;
@@ -36,15 +38,9 @@ public class LikeService {
    @Transactional
    public ResponseEntity<?> postLikes(Long id, HttpServletRequest request) {
       //로그인 확인
-      Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
+      Member member = getMember(request);
       //포스트 확인
-      Post post = postService.isPresentPost(id);
-      if (null == post) {
-         throw new PostNotFoundException();
-      }
+      Post post = getPost(id);
       //게시글에 좋아요를 눌렸는지 확인,
       // 그냥 게시글에서 확인하는 것이 아니라 포스트 라이크 리포지토리를 만들고, 좋아요를 누른 게시글에서 찾음
       Likes postLike = isPresentPostLike(member, post);
@@ -73,15 +69,9 @@ public class LikeService {
    @Transactional
    public ResponseEntity<?> commentLikes(Long id, HttpServletRequest request) {
       //로그인 확인
-      Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
+      Member member = getMember(request);
       //댓글 확인
-      Comment comment = commentService.isPresentComment(id);
-      if (null == comment) {
-         return new ResponseEntity<>(Message.fail("NOT_FOUND", "댓글이 존재하지 않습니다."), HttpStatus.NOT_FOUND);
-      }
+      Comment comment = getComment(id);
       //댓글에 좋아요 없으면 저장
       Likes commentLike = isPresentCommentLike(member, comment);
       if (null == commentLike) {
@@ -104,19 +94,10 @@ public class LikeService {
       }
    }
 
-
    @Transactional
    public ResponseEntity<?> subCommentLikes(Long id, HttpServletRequest request) {
-      Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
-
-      SubComment subComment = subCommentService.isPresentSubComment(id);
-      if (null == subComment) {
-         return new ResponseEntity<>(Message.fail("NOT_FOUND", "대댓글이 존재하지 않습니다."), HttpStatus.NOT_FOUND);
-      }
-
+      Member member = getMember(request);
+      SubComment subComment = getSubComment(id);
       Likes subCommentLike = isPresentSubCommentLike(member, subComment);
       if (null == subCommentLike) {
          subCommentLikeRepository.save(Likes.builder()
@@ -135,6 +116,34 @@ public class LikeService {
       }
    }
 
+   private Post getPost(Long id) {
+      Post post = postService.isPresentPost(id);
+      if (null == post) {
+         throw new PostNotFoundException();
+      }
+      return post;
+   }
+   private Member getMember(HttpServletRequest request) {
+      Member member = validateMember(request);
+      if (null == member) {
+         throw new InvalidTokenException();
+      }
+      return member;
+   }
+   private Comment getComment(Long id) {
+      Comment comment = commentService.isPresentComment(id);
+      if (null == comment) {
+         throw new CommentNotFoundException();
+      }
+      return comment;
+   }
+   private SubComment getSubComment(Long id) {
+      SubComment subComment = subCommentService.isPresentSubComment(id);
+      if (null == subComment) {
+         throw new SubCommentNotFoundException();
+      }
+      return subComment;
+   }
 
    @Transactional
    public Member validateMember(HttpServletRequest request) {
