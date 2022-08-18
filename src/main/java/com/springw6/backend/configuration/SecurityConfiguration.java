@@ -90,7 +90,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
    public CorsConfigurationSource corsConfigurationSource() {
       final CorsConfiguration configuration = new CorsConfiguration();
 
-      configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://3.37.127.16:8080"));
+      configuration.setAllowedOrigins(Arrays.asList("http://watchao-bucket-deploy.s3-website.ap-northeast-2.amazonaws.com/", "http://localhost:3000","http://3.37.127.16:8080"));
       configuration.addAllowedHeader("*");
       configuration.addAllowedHeader("Authorization");
       configuration.addAllowedMethod("*");

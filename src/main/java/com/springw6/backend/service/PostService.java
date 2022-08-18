@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +25,7 @@ public class PostService {
 
    private final PostRepository postRepository;
    private final TokenProvider tokenProvider;
+   private final CommentRepository commentRepository;
 
 
    @Transactional
@@ -132,6 +134,20 @@ public class PostService {
 
    @Transactional
    public ResponseEntity<?> deletePost(Long id, HttpServletRequest request) {
+
+      Member member = validateMember(request);
+      Post post = isPresentPost(id);
+      Check(request, member, post);
+      List<Comment> commentList=commentRepository.findAllByPost(post);
+      for (Comment comment : commentList) {
+         commentRepository.delete(comment);
+      }
+
+      postRepository.delete(post);
+      return new ResponseEntity<>(Message.success("delete success"),HttpStatus.OK);
+   }
+
+   private void Check(HttpServletRequest request, Member member, Post post) {
       if (null == request.getHeader("Refresh-Token")) {
          throw new InvalidTokenException();
       }
@@ -140,21 +156,16 @@ public class PostService {
          throw new InvalidAccessTokenException();
       }
 
-      Member member = validateMember(request);
       if (null == member) {
          throw new InvalidTokenException();
       }
 
-      Post post = isPresentPost(id);
       if (null == post) {
          throw new PostNotFoundException();
       }
-      if (post.getMember().getId()!=member.getId()) {
+      if (post.getMember().getId()!= member.getId()) {
          throw new NotAuthorException();
       }
-
-      postRepository.delete(post);
-      return new ResponseEntity<>(Message.success("delete success"),HttpStatus.OK);
    }
 
    @Transactional(readOnly = true)

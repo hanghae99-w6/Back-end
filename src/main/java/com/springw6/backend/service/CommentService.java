@@ -181,9 +181,10 @@ public class CommentService {
          throw new NotAuthorException();
       }
       //해당 댓글의 대댓글 리스트를 불러오고 대댓글이 있는 경우 삭제 대신 삭제된 댓글이라고 표시
-      List<SubComment> subCommentList = subCommentRepository.findAllByCommentId(comment.getId());
-      if (subCommentList!=null){comment.setComment("삭제된 댓글입니다.");} else{
-         commentRepository.delete(comment);}
+//      List<SubComment> subCommentList = subCommentRepository.findAllByCommentId(comment.getId());
+//      if (subCommentList.size()!=0){comment.setComment("삭제된 댓글입니다.");} else{
+//            commentRepository.delete(comment);}
+      comment.setComment("삭제된 댓글입니다.");
       return new ResponseEntity<>(Message.success("success"), HttpStatus.OK);
    }
 
