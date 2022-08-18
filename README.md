@@ -48,7 +48,7 @@
 
 #### ✨ 핵심 기능
 
-    (1)로그인, 회원가입
+1. 로그인, 회원가입
 
         : JWT를 이용하여 로그인과 회원가입을 구현하였습니다.
 
@@ -56,9 +56,11 @@
 
         : OAuth 2.0을 이용하여 카카오 소셜 로그인 기능이 가능합니다.
 
-    (2)CRUD
+2. CRUD
 
         : 각 카테고리별 영화/드라마/예능 사용자별 후기들을 참고 할 수 있습니다!
+        
+        : 글 작성시 이미지를 업로드 할 수 있습니다.
 
         : 댓글 기능을 통해, 다른 사용자와 경험을 공유 할 수 있습니다.
 
@@ -70,42 +72,63 @@
 <summary>(1) 카카오 계정을 통한 로그인 api 구현 과정의 여러 문제들</summary>
 <div markdown="1">
 
+ <br>
+ <br>
+ 
       - 카카오 로그인 같은 경우에는 실제 api 호출이 필요하여 서버를 열어두는 과정이 필요함
       - 이 과정에서 백엔드와 프론트 사이를 왔다갔다 하는 부분에서 문제가 발생함
-      - 디버깅을 할 수 없기 때문에 우분투를 열어두고 오류를 찾아서 해결하는 방식을 사용함
+      - 디버깅을 할 수 없기 때문에 우분투를 열어두고 오류를 찾아서 해결하는 방식을 사용함 
+ 
+<br>  
+ 
+    1.KOE320
+    - 로그인 요청 여러번 되는 경우 
 
-1.KOE320
-- 로그인 요청 여러번 되는 경우 
+    2.KOE303
+    - 인가 코드 요청 시 사용한 redirect_uri 와 액세스 토큰 요청 시 사용한 redirect_uri 가 다른 경우
+    - 백엔드와 프론트에서 같은 uri를 사용해 주어야 함
 
-2.KOE303
-- 인가 코드 요청 시 사용한 redirect_uri 와 액세스 토큰 요청 시 사용한 redirect_uri 가 다른 경우
-- 백엔드와 프론트에서 같은 uri를 사용해 주어야 함
+    3.이미 로그인 처리가 된 경우
+    - 로그인 과정에 인증 코드가 발급된 경우 로그인 한 것으로 간주하므로 계정 연결을 지워줄 필요성이 있음 
+    -> 카카오 계정 관리 페이지 https://accounts.kakao.com/weblogin/account/partner
 
-3.이미 로그인 처리가 된 경우
-- 로그인 과정에 인증 코드가 발급된 경우 로그인 한 것으로 간주하므로 계정 연결을 지워줄 필요성이 있음 
--> 카카오 계정 관리 페이지 https://accounts.kakao.com/weblogin/account/partner
-
-4.카카오에서 제공하는 정보와 변수명
+    4.카카오에서 제공하는 정보와 변수명
+     <br>
+     ![](https://velog.velcdn.com/images/jongleee/post/b69022cd-299e-492d-922f-70683d658bb9/image.png)
+     <br>
+    ```java
+    String nickname = jsonNode.get("properties")
+                  .get("nickname").asText();
+          String loginId = jsonNode.get("kakao_account")
+                  .get("email").asText();
+    ```
+    의 형태로 닉네임과 이메일을 받아올 수 있음
  <br>
- ![](https://velog.velcdn.com/images/jongleee/post/b69022cd-299e-492d-922f-70683d658bb9/image.png)
  <br>
-```java
-String nickname = jsonNode.get("properties")
-              .get("nickname").asText();
-      String loginId = jsonNode.get("kakao_account")
-              .get("email").asText();
-```
-의 형태로 닉네임과 이메일을 받아올 수 있음
+ <br>
 
 </details>
  
- 
+
 
 <details>
 <summary>(2) CORS문제 설정 다 했음에도 안됨</summary>
 <div markdown="1">
+ <br>
+ <br>
+CORS설정 내역
+ <br>
+ 
+ 
+ ```java
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
+ http
+          .cors().configurationSource(corsConfigurationSource());
+          ...후략...
+```
+
 ```java
-@Bean
+ @Bean
     public CorsConfigurationSource corsConfigurationSource() {
        final CorsConfiguration configuration = new CorsConfiguration();
 
@@ -136,6 +159,9 @@ String nickname = jsonNode.get("properties")
 //
 //    }
 ```
+ <br>
+ <br>
+ <br>
 
 </details>
  
@@ -144,6 +170,8 @@ String nickname = jsonNode.get("properties")
 <details>
 <summary>(3) 깃허브 충돌 문제</summary>
 <div markdown="1">
+ <br>
+ <br>
 최대한 충돌을 발생시키지 않으려고 여러 방법을 시도했는데 그냥 풀리퀘스트 하고 비교해서 처리하는게 가장 편했다!
 
 </details>
@@ -151,10 +179,39 @@ String nickname = jsonNode.get("properties")
 <details>
 <summary>(4) 양쪽 클래스에서 서로 참조하는 경우 순환오류 발생</summary>
 <div markdown="1">
+ <br>
+ <br>
 상호 참조 하는 경우를 만들지 말자
+ <br>
+ <br>
+ <br>
 
 </details>
-#### 📖 새로 적용해본 기술
+ 
+<details>
+<summary>(5) 이미지 업로드시 
+ 기본 용량 제한이 1MB여서 연결 후 사용시 문제가 발생함</summary>
+<div markdown="1"> 
+ 
+ <br>
+ <br>
+ <br>
+application.properties 파일에
+ 
+ 
+```java
+spring.servlet.multipart.maxFileSize=10MB
+spring.servlet.multipart.maxRequestSize=10MB
+ ```
 
+ 와 같이 제한을 설정할 수 있음
+ <br>
+ <br>
+ <br>
+</details>
+#### 📖 새로 적용해본 기술
+- OAuth 2.0을 통한 소셜 로그인
+ 
+ 
 개선해야할 사항
 
