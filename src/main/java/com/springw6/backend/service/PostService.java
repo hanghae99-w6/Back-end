@@ -168,24 +168,4 @@ public class PostService {
       }
       return tokenProvider.getMemberFromAuthentication();
    }
-
-   public void isRefreshTokenCheck(HttpServletRequest request) {
-      if (null == request.getHeader("Refresh-Token")) {
-        throw new InvalidTokenException();
-      }
-   }
-
-   public void isAuthorizationCheck(HttpServletRequest request) {
-      if (null == request.getHeader("Authorization")) {
-         throw new InvalidTokenException();
-      }
-   }
-
-   public void isTest(HttpServletRequest request) {
-      Member member = validateMember(request);
-      if (null == member) {
-         throw new InvalidTokenException();
-      }
-   }
-
 }

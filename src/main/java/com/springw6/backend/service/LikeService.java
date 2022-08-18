@@ -157,30 +157,6 @@ public class LikeService {
       for (Likes post : postLikeRepository.findAllByMemberOrderByPost(member)) {
          list.add(post.getPost().getId());
       }
-
-
       return list;
    }
-
-
-   @Transactional(readOnly = true)
-   public int countLikesPost(Post post) {
-      List<Likes> postLikeList = postLikeRepository.findAllByPost(post);
-      return postLikeList.size();
-   }
-
-
-   @Transactional(readOnly = true)
-   public int countLikesComment(Comment comment) {
-      List<Likes> commentLikeList = commentLikeRepository.findAllByComment(comment);
-      return commentLikeList.size();
-   }
-
-   @Transactional(readOnly = true)
-   public int countLikesSubCommentLike(SubComment subComment) {
-      List<Likes> subCommentLikeList = subCommentLikeRepository.findAllBySubComment(subComment);
-      return subCommentLikeList.size();
-   }
-
-
 }

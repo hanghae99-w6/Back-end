@@ -35,7 +35,6 @@ public class TokenProvider {
   private final Key key;
 
   private final RefreshTokenRepository refreshTokenRepository;
-//  private final UserDetailsServiceImpl userDetailsService;
 
   public TokenProvider(@Value("${jwt.secret}") String secretKey,
                        RefreshTokenRepository refreshTokenRepository) {

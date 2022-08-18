@@ -1,9 +1,5 @@
 package com.springw6.backend.controller;
 
-
-import com.springw6.backend.domain.Likes;
-import com.springw6.backend.domain.Member;
-import com.springw6.backend.domain.Post;
 import com.springw6.backend.repository.PostLikeRepository;
 import com.springw6.backend.service.LikeService;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController

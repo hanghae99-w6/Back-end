@@ -1,6 +1,5 @@
 package com.springw6.backend.repository;
 
-
 import com.springw6.backend.domain.Likes;
 import com.springw6.backend.domain.Member;
 import com.springw6.backend.domain.Post;
@@ -11,7 +10,6 @@ import java.util.Optional;
 
 public interface PostLikeRepository extends JpaRepository<Likes, Long> {
     Optional<Likes> findByMemberAndPost(Member member, Post post);
-    List<Likes> findAllByPost(Post post);
     List<Likes> findAllByMemberOrderByPost(Member member);
 
 }

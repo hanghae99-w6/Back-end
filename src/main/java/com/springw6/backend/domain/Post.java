@@ -40,7 +40,7 @@ public class Post extends Timestamped {
   @Column
   private Long likes;
 
-  @JsonIgnore //???
+  @JsonIgnore
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // 단방향
   // cascade = CascadeType.ALL , 현 Entity의 변경에 대해 관계를 맺은 Entity도 변경 전략을 결정합니다.
   // fetch = FetchType.LAZY, 관계된 Entity의 정보를 LAZY는 실제로 요청하는 순간 가져오는겁니다.
@@ -51,9 +51,6 @@ public class Post extends Timestamped {
   @JoinColumn(name = "member_id", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
-//
-//  @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-//  private List<Comment> commentList;
 
   @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
   // mappedBy, 양방향 관계 설정시 관계의 주체가 되는 쪽에서 정의합니다.

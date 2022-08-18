@@ -20,8 +20,6 @@ import javax.persistence.*;
 @Builder
 @Entity
 public class RefreshToken extends Timestamped {
-
-
     @Id
     @Column(nullable = false)
     private Long id;
@@ -33,7 +31,4 @@ public class RefreshToken extends Timestamped {
     @Column(nullable = false)
     private String value;
 
-    public void updateValue(String token) {
-        this.value = token;
-    }
 }

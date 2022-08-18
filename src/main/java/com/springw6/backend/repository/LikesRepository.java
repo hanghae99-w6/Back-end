@@ -4,9 +4,6 @@ package com.springw6.backend.repository;
 import com.springw6.backend.domain.Likes;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-
 public interface LikesRepository extends JpaRepository<Likes,Long> {
 
     Long countAllByPostId(Long postId);
