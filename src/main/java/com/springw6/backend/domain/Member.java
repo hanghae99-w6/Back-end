@@ -41,5 +41,6 @@ public class Member extends Timestamped{
         this.loginId = loginId;
         this.kakaoId = kakaoId;
     }
+    
 
 }

@@ -32,7 +32,7 @@ public class CommentService {
    private final PostService postService;
 
    @Transactional
-   public ResponseEntity<?> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
+   public ResponseEntity<?> createComment(CommentRequestDto requestDto, HttpServletRequest request, String name) {
       Member member = validateMember(request);
       if (null == member) {
          throw new InvalidTokenException();

@@ -10,6 +10,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AWSConfig {
+
+    // 변수명 을 명확하게
+    /**
+     * Key는 중요정보이기 때문에 properties 파일에 저장한 뒤 가져와 사용하는 방법이 좋습니다.
+     */
     @Value("${iamAccessKey}")
     private String iamAccessKey;
     @Value("${iamSecretKey}")
