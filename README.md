@@ -30,7 +30,7 @@
 
 #### 📚 와이어 프레임 / API 명세서
 
-  https://www.notion.so/API-684d6e41b6b147e98be2ee5b6515d732
+  https://courageous-bubble-325.notion.site/5-abb0b2421aa6449abd1b7a4251a9e819
 
 #### ✨ 핵심 기능
 
