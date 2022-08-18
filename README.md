@@ -6,13 +6,13 @@
 컨텐츠를 보고 별점과 코멘트를 남겨주세요.
 
 
-#### 🗓 프로젝트 기간
+### 🗓 프로젝트 기간
 2022년 08월 11일 ~ 2022년 8월 18일 (1주)
 
-#### ⚒️ 프로젝트 아키텍처
+### ⚒️ 프로젝트 아키텍처
 
 
-#### 🛠 기술스택
+### 🛠 기술스택
 
 <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"> <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> 
 <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> <img src="https://img.shields.io/badge/amazonaws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white"> 
@@ -21,15 +21,14 @@
 
 
 
-#### 😎 백엔드 팀원 소개
+### 😎 백엔드 팀원 소개
+이름 | 깃허브 주소 |
+---|---|
+이길종	| https://github.com/Jongleee
+이장원 |	https://github.com/wkddnjs
+한동훈 | https://github.com/hdonghun
 
-    이길종	https://github.com/Jongleee
-
-    이장원	https://github.com/wkddnjs
-    
-    한동훈 https://github.com/hdonghun
-
-#### 📚 와이어 프레임 / API 명세서
+### 📚 와이어 프레임 / API 명세서
 
 <details>
 <summary>여기를 눌러주세요</summary>
@@ -46,7 +45,7 @@
 </details>
 <br>
 
-#### ✨ 핵심 기능
+### ✨ 핵심 기능
 
 1. 로그인, 회원가입
 
@@ -66,13 +65,11 @@
 
         : 좋아요 👍 및 별점을 통해 직관적인 후기 참조 가능 
 
-#### 🔥 트러블슈팅
-
+### 🔥 트러블슈팅
+#### 1. 카카오 계정을 통한 로그인 api 구현 과정의 여러 문제들
 <details>
-<summary>(1) 카카오 계정을 통한 로그인 api 구현 과정의 여러 문제들</summary>
+<summary>해결방안</summary>
 <div markdown="1">
-
- <br>
  <br>
  
       - 카카오 로그인 같은 경우에는 실제 api 호출이 필요하여 서버를 열어두는 과정이 필요함
@@ -110,11 +107,10 @@
 </details>
  
 
-
+#### 2. CORS문제 설정 다 했음에도 안됨
 <details>
-<summary>(2) CORS문제 설정 다 했음에도 안됨</summary>
+<summary>해결방안</summary>
 <div markdown="1">
- <br>
  <br>
 CORS설정 내역
  <br>
@@ -166,35 +162,32 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
 </details>
  
  
-
+#### 3. 깃허브 충돌 문제
 <details>
-<summary>(3) 깃허브 충돌 문제</summary>
+<summary>해결방안</summary>
 <div markdown="1">
- <br>
  <br>
 최대한 충돌을 발생시키지 않으려고 여러 방법을 시도했는데 그냥 풀리퀘스트 하고 비교해서 처리하는게 가장 편했다!
 
+ <br>
+ <br>
 </details>
 
+#### 4. 양쪽 클래스에서 서로 참조하는 경우 순환오류 발생
 <details>
-<summary>(4) 양쪽 클래스에서 서로 참조하는 경우 순환오류 발생</summary>
+<summary>해결방안</summary>
 <div markdown="1">
- <br>
  <br>
 상호 참조 하는 경우를 만들지 말자
  <br>
  <br>
- <br>
 
 </details>
- 
+
+#### 5. 이미지 업로드시 기본 용량 제한이 1MB여서 문제가 발생함
 <details>
-<summary>(5) 이미지 업로드시 
- 기본 용량 제한이 1MB여서 연결 후 사용시 문제가 발생함</summary>
+<summary>해결방안</summary>
 <div markdown="1"> 
- 
- <br>
- <br>
  <br>
 application.properties 파일에
  
@@ -209,6 +202,7 @@ spring.servlet.multipart.maxRequestSize=10MB
  <br>
  <br>
 </details>
+
 #### 📖 새로 적용해본 기술
 - OAuth 2.0을 통한 소셜 로그인
  
