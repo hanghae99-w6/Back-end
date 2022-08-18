@@ -12,6 +12,8 @@
 
 🛠 기술스택
 
+  <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
+
     Python 3
 
     h2
@@ -21,6 +23,9 @@
     AWS EC2
   
     JWT(발급 후 토큰 검증만 하면 되기 때문에 추가 저장소가 필요 없다. 가볍다. 필요한 모든 정보를 자체적으로 지니고 있기(self-contained)때문에 두 개체 사이에서 손쉽게 전달 될 수 있다.)
+    
+    Dev tools
+VisualStudioCode Git Github
 
 
 😎 백엔드 팀원 소개
