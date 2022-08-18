@@ -28,7 +28,7 @@ public class FileService {
 
       for(MultipartFile multipartFile: multipartFileList) {
          String originalName = multipartFile.getOriginalFilename(); // 파일 이름
-         long size = multipartFile.getSize(); // 파일 크기
+         long size = multipartFile.getSize();  // 파일 크기
          if(size>3500000) throw new MaxUploadSizeExceededException(3500000);
 
          ObjectMetadata objectMetaData = new ObjectMetadata();

@@ -19,7 +19,7 @@ public class Post extends Timestamped {
 
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 키 생성을 데이터베이스에 위임
   private Long id;
 
   @Column(nullable = false)
@@ -40,8 +40,11 @@ public class Post extends Timestamped {
   @Column
   private Long likes;
 
-  @JsonIgnore
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIgnore //???
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // 단방향
+  // cascade = CascadeType.ALL , 현 Entity의 변경에 대해 관계를 맺은 Entity도 변경 전략을 결정합니다.
+  // fetch = FetchType.LAZY, 관계된 Entity의 정보를 LAZY는 실제로 요청하는 순간 가져오는겁니다.
+  // orphanRemoval = true, 관계 Entity에서 변경이 일어난 경우 DB 변경을 같이 할지 결정합니다.
   private List<Comment> comments;
 
 
@@ -53,6 +56,7 @@ public class Post extends Timestamped {
 //  private List<Comment> commentList;
 
   @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+  // mappedBy, 양방향 관계 설정시 관계의 주체가 되는 쪽에서 정의합니다.
   private List<Likes> postLikeList;
 
   public void update(PostRequestDto postRequestDto) {
