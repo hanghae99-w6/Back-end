@@ -12,6 +12,7 @@ WATCHAO 📺
 성필상 :
 
 2. 사용 기술
+
 Back-end :
   Python 3
   h2
