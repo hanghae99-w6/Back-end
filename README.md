@@ -38,7 +38,8 @@
     한동훈 https://github.com/hdonghun
 
 #### 📚 와이어 프레임 / API 명세서
-여기를 눌러주세요
+
+  https://www.notion.so/API-684d6e41b6b147e98be2ee5b6515d732
 
 #### ✨ 핵심 기능
 
