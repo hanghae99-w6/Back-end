@@ -20,7 +20,13 @@ Back-end :
   JWT
 
 Front-end :
-  
+
+3. 와이어프레임
+![image](https://user-images.githubusercontent.com/67058000/185298067-2c896d48-cdf8-47e6-9f19-75418480da4c.png)
+![image](https://user-images.githubusercontent.com/67058000/185298074-876bff0e-1fc1-4443-b3a7-f35fa3f1b787.png)
+![image](https://user-images.githubusercontent.com/67058000/185298085-6a671eb8-7e1c-4650-84eb-966c6d8e810a.png)
+![image](https://user-images.githubusercontent.com/67058000/185298093-99f7ee11-c0d8-4cd0-a8cf-c092ca444edb.png)
+
 
 
 
