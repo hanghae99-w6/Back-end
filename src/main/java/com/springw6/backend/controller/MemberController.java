@@ -38,11 +38,6 @@ public class MemberController {
         return memberService.loginMembers(requestDto,response);
     }
 
-    @PostMapping("/members/logout")
-    public ResponseEntity<?> logoutMembers(HttpServletRequest request) {
-        return memberService.logoutMembers(request);
-    }
-
     @GetMapping("/members/kakao/callback")
     public ResponseEntity<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         TokenDto tokenDto= memberService.kakaoLogin(code);
