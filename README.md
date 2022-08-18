@@ -27,9 +27,11 @@
 
     이름	깃허브 주소
 
-    이길종	https://github.com/lucy-pill
+    이길종	
 
-    이장원	https://github.com/BUMSUSHN
+    이장원	
+    
+    한동훈 https://github.com/hdonghun
 
 📚 와이어 프레임 / API 명세서
 여기를 눌러주세요
